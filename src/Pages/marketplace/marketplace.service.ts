@@ -38,7 +38,6 @@ interface MarketplaceProductRecord {
   price: number | string | null;
   currency: string | null;
   status: MarketplaceProductStatus | null;
-  sales_count: number | string | null;
   view_count: number | string | null;
   created_at: string;
   product_images?: MarketplaceProductImageRecord[] | null;
@@ -69,6 +68,7 @@ const getCoverUrl = (
 
 const mapProduct = (
   product: MarketplaceProductRecord,
+  deliveredSales: number,
 ): MarketplaceProduct => {
   const firstImage =
     Array.isArray(
@@ -104,7 +104,7 @@ const mapProduct = (
       product.status || "draft",
 
     sales_count:
-      Number(product.sales_count) || 0,
+      deliveredSales,
 
     view_count:
       Number(product.view_count) || 0,
@@ -120,6 +120,45 @@ const mapProduct = (
       product.created_at,
   };
 };
+
+/* =========================================================
+   GET DELIVERED SALES BY PRODUCT
+========================================================= */
+
+export async function getDeliveredSalesByProduct(): Promise<
+  Record<string, number>
+> {
+  const { data, error } = await supabase
+    .from("order_items")
+    .select(`
+      product_id,
+      quantity,
+      orders!inner (
+        order_status
+      )
+    `)
+    .eq("orders.order_status", "delivered")
+    .not("product_id", "is", null);
+
+  if (error) {
+    throw new Error(
+      `Impossible de récupérer les ventes livrées : ${error.message}`,
+    );
+  }
+
+  const salesByProduct: Record<string, number> = {};
+
+  for (const item of data ?? []) {
+    if (!item.product_id) continue;
+
+    const quantity = Number(item.quantity) || 0;
+
+    salesByProduct[item.product_id] =
+      (salesByProduct[item.product_id] ?? 0) + quantity;
+  }
+
+  return salesByProduct;
+}
 
 /* =========================================================
    GET ALL PRODUCTS
@@ -144,7 +183,6 @@ export const getMarketplaceProducts =
           price,
           currency,
           status,
-          sales_count,
           view_count,
           created_at,
           product_images (
@@ -174,8 +212,14 @@ export const getMarketplaceProducts =
       );
     }
 
-    return (data ?? []).map(
-      mapProduct,
+    const deliveredSalesByProduct =
+      await getDeliveredSalesByProduct();
+
+    return (data ?? []).map((product) =>
+      mapProduct(
+        product,
+        deliveredSalesByProduct[product.id] ?? 0,
+      ),
     );
   };
 
@@ -208,7 +252,6 @@ export const getMarketplaceProductById =
           price,
           currency,
           status,
-          sales_count,
           view_count,
           created_at,
           product_images (
@@ -243,7 +286,13 @@ export const getMarketplaceProductById =
       );
     }
 
-    return mapProduct(data);
+    const deliveredSalesByProduct =
+      await getDeliveredSalesByProduct();
+
+    return mapProduct(
+      data,
+      deliveredSalesByProduct[data.id] ?? 0,
+    );
   };
 
 /* =========================================================

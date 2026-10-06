@@ -41,18 +41,25 @@ const Dashboard = () => {
     [messageIndex]
   );
 
-  const { profile, isLoading, error } = useProfile();
+  const {
+    profile,
+    isLoading: profileLoading,
+    error: profileError,
+  } = useProfile();
   const {
     analytics,
     stats,
+    topProducts,
     activities,
     effectivePeriod,
     periodOptions,
+    loading: dashboardLoading,
+    error: dashboardError,
   } = useDashboard();
 
   // ================= LOADING SKELETON =================
 
-  if (isLoading) {
+  if (profileLoading || dashboardLoading) {
     return (
       <div className="min-h-screen bg-[#fafafa] px-3 py-4 sm:px-4 sm:py-5 lg:px-6 lg:py-6">
         <div className="animate-pulse">
@@ -200,14 +207,18 @@ const Dashboard = () => {
 
   // ================= ERROR STATE =================
 
-  if (error) {
+  if (profileError || dashboardError) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#fafafa] px-4">
         <div className="bg-white p-5 text-center rounded-xl border border-gray-200">
           <p className="text-sm font-medium text-red-600">
-            Impossible de charger votre profil.
+            {profileError
+              ? "Impossible de charger votre profil."
+              : "Impossible de charger le dashboard."}
           </p>
-          <p className="mt-1 text-xs text-gray-500">{error}</p>
+          <p className="mt-1 text-xs text-gray-500">
+            {profileError ?? dashboardError}
+          </p>
         </div>
       </div>
     );
@@ -259,7 +270,7 @@ const Dashboard = () => {
           </section>
 
           <div className="min-w-0">
-            <DocPerformance />
+            <DocPerformance products={topProducts} />
           </div>
 
           <div className="min-w-0">

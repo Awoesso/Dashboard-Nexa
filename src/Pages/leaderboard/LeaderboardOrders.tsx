@@ -132,7 +132,7 @@ const LeaderboardOrders: React.FC<LeaderboardOrdersProps> = ({
       <div className="border-b border-gray-100 p-3 sm:p-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">
-            <p className="mt-1 text-xs text-gray-500">
+            <p className="mt-1 text-xs font-semibold text-gray-700!">
               Consultez et gérez les commandes de votre boutique.
             </p>
           </div>
@@ -158,7 +158,7 @@ const LeaderboardOrders: React.FC<LeaderboardOrdersProps> = ({
               className="
                 h-9
                 w-full
-                rounded-lg
+                rounded-full
                 border border-gray-200
                 bg-gray-50
                 pl-9 pr-3
@@ -300,7 +300,7 @@ const LeaderboardOrders: React.FC<LeaderboardOrdersProps> = ({
                 font-semibold
                 uppercase
                 tracking-wide
-                text-gray-400
+                text-gray-800
                 md:grid
               "
             >

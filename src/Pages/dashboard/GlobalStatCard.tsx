@@ -40,7 +40,6 @@ const GlobalStatCard = ({ stats }: GlobalStatCardProps) => {
       label: "Total Sales",
       value: stats.totalSales,
       change: stats.salesChange ?? 0,
-      currency: stats.currency,
       period: "",
     },
   ];

@@ -1427,6 +1427,10 @@ export const getDashboardData = async (
     const quantity = safeNumber(item.quantity);
     const unitPrice = safeNumber(item.unit_price);
 
+    if (quantity <= 0) {
+      continue;
+    }
+
     const existing = productsMap.get(key);
 
     if (existing) {
@@ -1443,7 +1447,7 @@ export const getDashboardData = async (
     }
   }
 
-  const topProducts = Array.from(
+  let topProducts = Array.from(
     productsMap.values()
   )
     .sort((a, b) => {
@@ -1453,7 +1457,7 @@ export const getDashboardData = async (
 
       return b.earnings - a.earnings;
     })
-    .slice(0, 5)
+    .slice(0, 2)
     .map((item): DashboardTopProduct => {
       const product =
         !item.id.startsWith("item:")
@@ -1479,6 +1483,25 @@ export const getDashboardData = async (
           product?.cover_image_url ?? null,
       };
     });
+
+  if (topProducts.length === 0) {
+    topProducts = [...snapshot.products]
+      .sort(
+        (a, b) =>
+          safeNumber(b.price) - safeNumber(a.price)
+      )
+      .slice(0, 2)
+      .map((product): DashboardTopProduct => ({
+        id: product.id,
+        name: product.name,
+        price: safeNumber(product.price),
+        sales: 0,
+        earnings: 0,
+        currency: product.currency ?? stats.currency,
+        status: product.status,
+        coverImageUrl: product.cover_image_url,
+      }));
+  }
 
   /* --------------------------------------------------------------------------
      Activities

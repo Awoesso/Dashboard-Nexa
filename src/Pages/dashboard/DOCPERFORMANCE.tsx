@@ -1,17 +1,9 @@
-import { useEffect, useState } from "react";
 import { FileText } from "lucide-react";
-import { supabase } from "@/lib/supabase";
 import { Link } from "react-router-dom";
-type DocumentStatus = "Published" | "Draft";
+import type { DashboardTopProduct } from "@/services/dashboard.service";
 
-type Document = {
-  id: number;
-  name: string;
-  image_url: string | null;
-  price: number;
-  downloads: number;
-  earnings: number;
-  status: DocumentStatus;
+type DocPerformanceProps = {
+  products: DashboardTopProduct[];
 };
 
 const columns = [
@@ -25,38 +17,7 @@ const columns = [
 const formatCurrency = (value: number) =>
   `${value.toLocaleString("fr-FR")} XOF`;
 
-const DOCPERFORMANCE = () => {
-  const [documents, setDocuments] = useState<Document[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchDocuments = async () => {
-      setLoading(true);
-      setError(null);
-
-      const { data, error } = await supabase
-        .from("products")
-        .select(
-          "id, name, image_url, price, downloads, earnings, status"
-        )
-        .order("created_at", { ascending: false });
-
-      if (error) {
-        console.error("Erreur Supabase :", error);
-        setError("Unable to load documents.");
-        setDocuments([]);
-        setLoading(false);
-        return;
-      }
-
-      setDocuments(data ?? []);
-      setLoading(false);
-    };
-
-    fetchDocuments();
-  }, []);
-
+const DOCPERFORMANCE = ({ products }: DocPerformanceProps) => {
   return (
     <section className="rounded-2xl border border-gray-200 bg-white p-4">
 
@@ -111,23 +72,9 @@ const DOCPERFORMANCE = () => {
 
         {/* Loading */}
 
-        {loading && (
-          <div className="py-8 text-center text-[11px] text-gray-400">
-            Loading documents...
-          </div>
-        )}
-
-        {/* Error */}
-
-        {!loading && error && (
-          <div className="py-8 text-center text-[11px] text-red-400">
-            {error}
-          </div>
-        )}
-
         {/* Empty */}
 
-        {!loading && !error && documents.length === 0 && (
+        {products.length === 0 && (
           <div className="py-8 text-center text-[11px] text-gray-400">
             No products found.
           </div>
@@ -135,11 +82,9 @@ const DOCPERFORMANCE = () => {
 
         {/* Rows */}
 
-        {!loading &&
-          !error &&
-          documents.map((document) => (
+        {products.map((product) => (
             <div
-              key={document.id}
+              key={product.id}
               title="see details"
               className="grid grid-cols-[1.8fr_0.8fr_0.7fr_0.9fr_0.7fr] cursor-pointer items-center border-b border-gray-100 px-3 py-2.5"
             >
@@ -152,10 +97,10 @@ const DOCPERFORMANCE = () => {
                
                 className="h-7 w-7 shrink-0 overflow-hidden rounded-md bg-gray-100">
 
-                  {document.image_url ? (
+                  {product.coverImageUrl ? (
                     <img
-                      src={document.image_url}
-                      alt={document.name}
+                      src={product.coverImageUrl}
+                      alt={product.name}
                       className="h-full w-full object-cover"
                     />
                   ) : (
@@ -170,7 +115,7 @@ const DOCPERFORMANCE = () => {
                 </div>
 
                 <span className="truncate text-[11px] font-medium text-gray-700">
-                  {document.name}
+                  {product.name}
                 </span>
 
               </div>
@@ -178,31 +123,33 @@ const DOCPERFORMANCE = () => {
               {/* Price */}
 
               <span className="text-[11px] text-gray-700">
-                {formatCurrency(document.price)}
+                {formatCurrency(product.price)}
               </span>
 
               {/* Downloads */}
 
               <span className="text-[11px] text-gray-700">
-                {document.downloads}
+                {product.sales}
               </span>
 
               {/* Earnings */}
 
               <span className="text-[11px] text-gray-700">
-                {formatCurrency(document.earnings)}
+                {formatCurrency(product.earnings)}
               </span>
 
               {/* Status */}
 
               <span
                 className={`w-fit rounded-full px-2 py-0.5 text-[9px] font-semibold ${
-                  document.status === "Published"
+                  product.status?.toLowerCase() === "published"
                     ? "bg-green-100 text-green-700"
                     : "bg-orange-100 text-orange-600"
                 }`}
               >
-                {document.status}
+                {product.status
+                  ? product.status.charAt(0).toUpperCase() + product.status.slice(1)
+                  : "Draft"}
               </span>
 
             </div>

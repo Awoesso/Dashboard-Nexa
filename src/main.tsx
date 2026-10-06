@@ -7,6 +7,11 @@ import { router } from "./router";
 import { AuthcontextProvider } from "./Context/Authcontext";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { ProfileProvider } from "./Context/ProfileContext";
+
+import { registerServiceWorker } from "./lib/registerServiceWorker";
+
+void registerServiceWorker();
+
 ReactDOM.createRoot(
   document.getElementById("root")!
 ).render(
@@ -14,9 +19,8 @@ ReactDOM.createRoot(
     <ErrorBoundary>
       <AuthcontextProvider>
         <ProfileProvider>
-             <RouterProvider router={router} />
-             </ProfileProvider>
-     
+          <RouterProvider router={router} />
+        </ProfileProvider>
       </AuthcontextProvider>
     </ErrorBoundary>
   </React.StrictMode>

@@ -1,5 +1,4 @@
 import {
-  Bell,
   ChevronDown,
   Plus,
   Settings,
@@ -11,6 +10,9 @@ import {
 import { Link } from "react-router-dom";
 
 import { useEffect, useRef, useState } from "react";
+import NotificationCenter from "@/components/Notifications/NotificationCenter";
+import useDelayedNotificationPrompt from "@/hooks/useDelayedNotificationPrompt";
+import usePushNotifications from "@/hooks/usePushNotifications";
 
 interface UserMenuPillProps {
   avatarUrl: string;
@@ -253,6 +255,24 @@ interface NavbarProps {
 const Navbar = ({
   onMenuClick,
 }: NavbarProps) => {
+  const { permission, enable } =
+    usePushNotifications();
+  const {
+    visible,
+    dismiss,
+  } = useDelayedNotificationPrompt();
+
+  const handleEnableNotifications = async () => {
+    const enabled = await enable();
+
+    if (enabled) {
+      dismiss();
+    }
+  };
+
+  const shouldShowPrompt =
+    permission === "default" && visible;
+
   return (
     <header
       className="
@@ -355,41 +375,57 @@ const Navbar = ({
           lg:gap-4!
         "
       >
+        {shouldShowPrompt && (
+          <div
+            className="
+              hidden
+              items-center
+              gap-3
+              rounded-xl
+              border
+              border-blue-200
+              bg-blue-50/80
+              px-3
+              py-2
+              text-left
+              shadow-sm
+              md:flex
+            "
+          >
+            <div className="min-w-0">
+              <p className="text-[10px] font-semibold text-gray-900">
+                Ne rate aucune commande
+              </p>
+              <p className="mt-0.5 text-[9px] text-gray-600">
+                Active les notifications pour être averti des nouvelles commandes.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  void handleEnableNotifications();
+                }}
+                className="rounded-lg bg-blue-600 px-2.5 py-1.5 text-[9px] font-semibold text-white transition hover:bg-blue-700"
+              >
+                Activer
+              </button>
+
+              <button
+                type="button"
+                onClick={dismiss}
+                className="rounded-lg border border-gray-200 bg-white px-2.5 py-1.5 text-[9px] font-medium text-gray-600 transition hover:bg-gray-100"
+              >
+                Plus tard
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* ================= NOTIFICATIONS ================= */}
 
-        <button
-          type="button"
-          aria-label="Notifications"
-          className="
-            flex!
-            h-9!
-            w-9!
-            shrink-0!
-            items-center!
-            justify-center!
-            rounded-full!
-            border!
-            border-gray-200!
-            bg-white!
-            text-gray-500!
-            transition!
-            hover:border-gray-300!
-            hover:bg-gray-50!
-            hover:text-gray-900!
-            focus:outline-none!
-            focus:ring-2!
-            focus:ring-orange-500/20!
-
-            sm:h-10!
-            sm:w-10!
-          "
-        >
-          <Bell
-            size={17}
-            strokeWidth={1.9}
-            className="sm:size-[19px]!"
-          />
-        </button>
+        <NotificationCenter />
 
         {/* ================= USER ================= */}
 

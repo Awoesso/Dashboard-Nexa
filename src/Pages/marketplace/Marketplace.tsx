@@ -11,6 +11,7 @@ import MarketplaceList from "./MarketplaceList";
 import MarketplaceEmptyState from "./MarketplaceEmptyState";
 import MarketplaceErrorState from "./MarketplaceErrorState";
 import ProductDeleteModal from "./ProductDeleteModal";
+import { supabase } from "@/lib/supabase";
 
 import type {
   MarketplaceProduct,
@@ -63,9 +64,11 @@ const Marketplace = () => {
   ======================================================= */
 
   const loadProducts = useCallback(
-    async () => {
+    async (showLoading = true) => {
       try {
-        setIsLoading(true);
+        if (showLoading) {
+          setIsLoading(true);
+        }
         setError(null);
 
         const data =
@@ -84,7 +87,9 @@ const Marketplace = () => {
             : "Unable to load products.",
         );
       } finally {
-        setIsLoading(false);
+        if (showLoading) {
+          setIsLoading(false);
+        }
       }
     },
     [],
@@ -94,6 +99,50 @@ const Marketplace = () => {
     queueMicrotask(() => {
       void loadProducts();
     });
+  }, [loadProducts]);
+
+  useEffect(() => {
+    let refreshTimer: ReturnType<typeof setTimeout> | null = null;
+
+    const scheduleRefresh = () => {
+      if (refreshTimer) {
+        clearTimeout(refreshTimer);
+      }
+
+      refreshTimer = setTimeout(() => {
+        void loadProducts(false);
+      }, 250);
+    };
+
+    const channel = supabase
+      .channel("marketplace-delivered-sales")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "orders",
+        },
+        scheduleRefresh,
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "order_items",
+        },
+        scheduleRefresh,
+      )
+      .subscribe();
+
+    return () => {
+      if (refreshTimer) {
+        clearTimeout(refreshTimer);
+      }
+
+      void supabase.removeChannel(channel);
+    };
   }, [loadProducts]);
 
   /* =======================================================

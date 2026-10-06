@@ -2,18 +2,21 @@ import {
   createBrowserRouter,
   Navigate,
 } from "react-router-dom";
-import ProductsNew from "./Pages/products/ProductsNew";
+import { Suspense } from "react";
 import DashboardLayout from "./layouts/DashboardLayout";
 import { ProtectedRoute, PublicRoute } from "./components/ProtectedRoute";
-import MarketplaceProductDetails from "@/Pages/marketplace/MarketplaceProductDetails";
-import OrderPage from "./Pages/leaderboard/OrderPage";
-
-import Leaderboard from "./Pages/leaderboard/Leaderboard";
-import Dashboard from "./Pages/dashboard/Dashboard";
-import Settings from "./Pages/settings/Settings";
-import Marketplace from "./Pages/marketplace/Marketplace";
-import SignIn from "./Pages/auth/SignIn";
-import SignUp from "./Pages/auth/SignUp";
+import {
+  Dashboard,
+  Leaderboard,
+  Marketplace,
+  MarketplaceProductDetails,
+  OrderPage,
+  ProductsNew,
+  RouteLoading,
+  Settings,
+  SignIn,
+  SignUp,
+} from "./routePages";
 import NotFound from "./Pages/NotFound";
 import ErrorFallback from "./Pages/ErrorFallback";
 
@@ -29,7 +32,9 @@ export const router = createBrowserRouter([
     errorElement: <ErrorFallback />,
     element: (
       <PublicRoute>
-        <SignIn />
+        <Suspense fallback={<RouteLoading />}>
+          <SignIn />
+        </Suspense>
       </PublicRoute>
     ),
   },
@@ -39,7 +44,9 @@ export const router = createBrowserRouter([
     errorElement: <ErrorFallback />,
     element: (
       <PublicRoute>
-        <SignUp />
+        <Suspense fallback={<RouteLoading />}>
+          <SignUp />
+        </Suspense>
       </PublicRoute>
     ),
   },
@@ -61,38 +68,75 @@ export const router = createBrowserRouter([
       {
         path: "home",
         errorElement: <ErrorFallback />,
-        element: <Dashboard />,
+        element: (
+          <Suspense fallback={<RouteLoading />}>
+            <Dashboard />
+          </Suspense>
+        ),
       },
 {
   path: "products/new",
           errorElement: <ErrorFallback />,
 
-  element: <ProductsNew />,
+  element: (
+    <Suspense fallback={<RouteLoading />}>
+      <ProductsNew />
+    </Suspense>
+  ),
 },
       {
         path: "settings",
         errorElement: <ErrorFallback />,
-        element: <Settings />,
+        element: (
+          <Suspense fallback={<RouteLoading />}>
+            <Settings />
+          </Suspense>
+        ),
       },
        {
         path: "leaderboard",
         errorElement: <ErrorFallback />,
-        element: <Leaderboard />,
+        element: (
+          <Suspense fallback={<RouteLoading />}>
+            <Leaderboard />
+          </Suspense>
+        ),
       },
       {
         path: "orders/:orderId",
         errorElement: <ErrorFallback />,
-        element: <OrderPage />,
+        element: (
+          <Suspense fallback={<RouteLoading />}>
+            <OrderPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "leaderboard/orders/:orderId",
+        errorElement: <ErrorFallback />,
+        element: (
+          <Suspense fallback={<RouteLoading />}>
+            <OrderPage />
+          </Suspense>
+        ),
       },
        {
         path: "marketplace",
         errorElement: <ErrorFallback />,
-        element: <Marketplace />,
+        element: (
+          <Suspense fallback={<RouteLoading />}>
+            <Marketplace />
+          </Suspense>
+        ),
       },
        {
         path: "/dashboard/marketplace/:productId",
         errorElement: <ErrorFallback />,
-        element: <MarketplaceProductDetails />,
+        element: (
+          <Suspense fallback={<RouteLoading />}>
+            <MarketplaceProductDetails />
+          </Suspense>
+        ),
       },
       
     ],

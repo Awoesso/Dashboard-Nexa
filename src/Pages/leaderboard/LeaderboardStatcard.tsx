@@ -114,7 +114,7 @@ const OverviewHeader: React.FC = () => (
     </div>
     <div className="min-w-0">
    
-      <p className="mt-0.5 truncate text-[9px] text-gray-400 sm:text-[10px]">
+      <p className="mt-0.5 truncate text-[9px] font-semibold text-gray-700 sm:text-[10px]">
         Performances de votre boutique
       </p>
     </div>
