@@ -97,12 +97,19 @@ const sanitizeNotificationData = (
   };
 };
 
-const isExpiredPushError = (
-  message: string
-): boolean => {
-  return /410|gone|expired|invalid|unauthorized/i.test(
-    message
-  );
+const getPushStatusCode = (
+  error: unknown
+): number | null => {
+  if (
+    error &&
+    typeof error === "object" &&
+    "statusCode" in error &&
+    typeof error.statusCode === "number"
+  ) {
+    return error.statusCode;
+  }
+
+  return null;
 };
 
 Deno.serve(async (req: Request) => {
@@ -114,25 +121,26 @@ Deno.serve(async (req: Request) => {
   }
 
   const expectedSecret =
-    Deno.env.get("PUSH_WEBHOOK_SECRET") ??
-    Deno.env.get("SEND_PUSH_SECRET");
+    Deno.env.get("PUSH_WEBHOOK_SECRET");
 
-  if (expectedSecret) {
-    const authorizationHeader =
-      req.headers.get("authorization") ??
-      req.headers.get("x-push-secret");
+  if (!expectedSecret) {
+    return jsonResponse(500, {
+      ok: false,
+      error: "Server configuration missing",
+    });
+  }
 
-    const secretValue =
-      authorizationHeader?.startsWith("Bearer ")
-        ? authorizationHeader.replace(/^Bearer\s+/i, "")
-        : authorizationHeader;
+  const authorizationHeader =
+    req.headers.get("authorization");
 
-    if (!secretValue || secretValue !== expectedSecret) {
-      return jsonResponse(401, {
-        ok: false,
-        error: "Unauthorized",
-      });
-    }
+  if (
+    authorizationHeader !==
+    `Bearer ${expectedSecret}`
+  ) {
+    return jsonResponse(401, {
+      ok: false,
+      error: "Unauthorized",
+    });
   }
 
   let payload: unknown;
@@ -231,6 +239,7 @@ Deno.serve(async (req: Request) => {
 
   const sent = [] as string[];
   const invalid = [] as string[];
+  let failed = 0;
 
   await Promise.all(
     records.map(async (subscription) => {
@@ -248,12 +257,9 @@ Deno.serve(async (req: Request) => {
 
         sent.push(subscription.id);
       } catch (error) {
-        const message =
-          error instanceof Error
-            ? error.message
-            : String(error);
+        const statusCode = getPushStatusCode(error);
 
-        if (isExpiredPushError(message)) {
+        if (statusCode === 404 || statusCode === 410) {
           invalid.push(subscription.id);
 
           const { error: deleteError } =
@@ -264,23 +270,26 @@ Deno.serve(async (req: Request) => {
 
           if (deleteError) {
             console.error(
-              "Unable to delete expired subscription"
+              "Unable to delete expired push subscription"
             );
           }
 
           return;
         }
 
+        failed += 1;
         console.error(
-          "Push delivery failed for subscription"
+          "Push delivery failed",
+          statusCode ? `HTTP ${statusCode}` : "without an HTTP status"
         );
       }
     })
   );
 
-  return jsonResponse(200, {
-    ok: true,
+  return jsonResponse(failed > 0 ? 502 : 200, {
+    ok: failed === 0,
     sent: sent.length,
     invalidSubscriptions: invalid.length,
+    failed,
   });
 });
