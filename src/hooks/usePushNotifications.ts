@@ -1,6 +1,7 @@
 import {
   useCallback,
   useEffect,
+  useRef,
   useState,
 } from "react";
 
@@ -47,6 +48,9 @@ interface UsePushNotificationsReturn {
 
 export const usePushNotifications =
   (): UsePushNotificationsReturn => {
+    const enableInFlightRef =
+      useRef<Promise<boolean> | null>(null);
+
     const [supported, setSupported] =
       useState(false);
 
@@ -148,6 +152,12 @@ export const usePushNotifications =
     const enable = useCallback(
       async (): Promise<boolean> => {
         if (
+          enableInFlightRef.current
+        ) {
+          return enableInFlightRef.current;
+        }
+
+        if (
           !isPushNotificationSupported()
         ) {
           setError(
@@ -157,59 +167,62 @@ export const usePushNotifications =
           return false;
         }
 
-        try {
-          setLoading(true);
-          setError(null);
+        const operation = (async (): Promise<boolean> => {
+          try {
+            setLoading(true);
+            setError(null);
 
-          /*
-           * C'est ICI seulement qu'on demande
-           * la permission du navigateur.
-           */
-          const nextPermission =
-            await requestNotificationPermission();
+            const nextPermission =
+              await requestNotificationPermission();
 
-          setPermission(
-            nextPermission
-          );
+            setPermission(
+              nextPermission
+            );
 
-          if (
-            nextPermission !== "granted"
-          ) {
-            setSubscription(null);
+            if (
+              nextPermission !== "granted"
+            ) {
+              setSubscription(null);
+
+              return false;
+            }
+
+            const nextSubscription =
+              await subscribeToPushNotifications();
+
+            if (!nextSubscription) {
+              setSubscription(null);
+
+              return false;
+            }
+
+            setSubscription(
+              nextSubscription
+            );
+
+            return true;
+          } catch (error: unknown) {
+            console.error(
+              "Erreur activation Push :",
+              error
+            );
+
+            setError(
+              error instanceof Error
+                ? error.message
+                : "Impossible d'activer les notifications."
+            );
 
             return false;
+          } finally {
+            setLoading(false);
+            enableInFlightRef.current = null;
           }
+        })();
 
-          const nextSubscription =
-            await subscribeToPushNotifications();
+        enableInFlightRef.current = operation;
 
-          if (!nextSubscription) {
-            setSubscription(null);
-
-            return false;
-          }
-
-          setSubscription(
-            nextSubscription
-          );
-
-          return true;
-        } catch (error: unknown) {
-          console.error(
-            "Erreur activation Push :",
-            error
-          );
-
-          setError(
-            error instanceof Error
-              ? error.message
-              : "Impossible d'activer les notifications."
-          );
-
-          return false;
-        } finally {
-          setLoading(false);
-        }
+        return operation;
       },
       []
     );

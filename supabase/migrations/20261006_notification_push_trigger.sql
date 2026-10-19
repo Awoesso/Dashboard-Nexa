@@ -66,6 +66,10 @@ BEGIN
     RETURN NEW;
   END IF;
 
+  IF COALESCE(push_secret, '') = '' THEN
+    RETURN NEW;
+  END IF;
+
   payload := jsonb_build_object(
     'user_id', user_id,
     'title', NEW.title,

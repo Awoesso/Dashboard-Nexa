@@ -20,10 +20,9 @@ export interface CreateProductData {
   price: number;
 
   /*
-   * Kept for compatibility with ProductsNew.
-   * Not sent to the current products table.
+   * Supported by the current products table.
    */
-  compare_at_price?: number | null;
+  compare_price?: number | null;
 
   currency?: string;
 
@@ -225,6 +224,11 @@ export const createProduct = async (
       null,
 
     price: product.price,
+
+    compare_price:
+      typeof product.compare_price === "number"
+        ? product.compare_price
+        : null,
 
     currency:
       product.currency || "XOF",

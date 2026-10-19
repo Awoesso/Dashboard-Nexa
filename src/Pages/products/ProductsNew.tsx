@@ -454,12 +454,23 @@ const ProductsNew = () => {
          description
          category
          price
+         compare_price
          currency
          status
          sales_count
          view_count
          created_at
       --------------------------------------------- */
+
+      const comparePrice =
+        form.comparePrice.trim()
+          ? Number(
+              form.comparePrice.replace(
+                /\s/g,
+                "",
+              ),
+            )
+          : null;
 
       const productData = {
         name: form.productName.trim(),
@@ -473,6 +484,9 @@ const ProductsNew = () => {
           null,
 
         price,
+
+        compare_price:
+          comparePrice,
 
         currency: "XOF",
 

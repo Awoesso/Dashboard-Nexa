@@ -16,6 +16,7 @@ export interface MarketplaceProduct {
   description: string | null;
   category: string | null;
   price: number;
+  compare_price: number | null;
   currency: string;
   status: MarketplaceProductStatus;
   sales_count: number;
@@ -36,6 +37,7 @@ interface MarketplaceProductRecord {
   description: string | null;
   category: string | null;
   price: number | string | null;
+  compare_price: number | string | null;
   currency: string | null;
   status: MarketplaceProductStatus | null;
   view_count: number | string | null;
@@ -96,6 +98,12 @@ const mapProduct = (
 
     price:
       Number(product.price) || 0,
+
+    compare_price:
+      product.compare_price === null ||
+      product.compare_price === undefined
+        ? null
+        : Number(product.compare_price) || null,
 
     currency:
       product.currency || "XOF",
@@ -181,6 +189,7 @@ export const getMarketplaceProducts =
           description,
           category,
           price,
+          compare_price,
           currency,
           status,
           view_count,
@@ -250,6 +259,7 @@ export const getMarketplaceProductById =
           description,
           category,
           price,
+          compare_price,
           currency,
           status,
           view_count,

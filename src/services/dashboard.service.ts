@@ -1549,11 +1549,16 @@ export const getDashboardData = async (
    REALTIME
 ============================================================================ */
 
+let dashboardChannelSequence = 0;
+
 export const subscribeToDashboard = (
   onChange: () => void
 ): (() => void) => {
+  const channelTopic =
+    `nexa-dashboard-${Date.now()}-${dashboardChannelSequence++}`;
+
   const channel = supabase
-    .channel("nexa-dashboard")
+    .channel(channelTopic)
     .on(
       "postgres_changes",
       {

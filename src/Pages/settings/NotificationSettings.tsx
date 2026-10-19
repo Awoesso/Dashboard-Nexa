@@ -2,10 +2,12 @@ import { useState } from "react";
 import {
   Check,
   CreditCard,
+  Bell,
   Package,
   ShieldCheck,
   ShoppingCart,
 } from "lucide-react";
+import usePushNotifications from "@/hooks/usePushNotifications";
 
 type NotificationPreferences = {
   orders: boolean;
@@ -24,6 +26,16 @@ const DEFAULT_SETTINGS: NotificationPreferences = {
 const STORAGE_KEY = "orion-notification-settings";
 
 const NotificationSettings = () => {
+  const {
+    supported,
+    permission,
+    enabled,
+    loading: pushLoading,
+    error: pushError,
+    enable,
+    disable,
+  } = usePushNotifications();
+
   const [settings, setSettings] =
     useState<NotificationPreferences>(() => {
       const saved =
@@ -156,6 +168,54 @@ const NotificationSettings = () => {
           }
         />
       </div>
+
+      <div className="flex! min-w-0! items-center! justify-between! gap-4! border-b! border-gray-200! py-4!">
+        <div className="flex! min-w-0! items-start! gap-3!">
+          <div className="flex! h-8! w-8! shrink-0! items-center! justify-center! rounded-xl! bg-blue-50! text-blue-600!">
+            <Bell size={15} strokeWidth={1.8} />
+          </div>
+          <div className="min-w-0!">
+            <p className="text-[11px]! font-semibold! text-gray-900! sm:text-xs!">
+              Browser push notifications
+            </p>
+            <p className="mt-0.5! max-w-xl! text-[9px]! font-medium! leading-relaxed! text-gray-500! sm:text-[10px]!">
+              {permission === "denied"
+                ? "Notifications are blocked in your browser settings."
+                : enabled
+                  ? "Push notifications are enabled for this browser."
+                  : "Allow this browser to send you push notifications."}
+            </p>
+          </div>
+        </div>
+        <button
+          type="button"
+          role="switch"
+          aria-checked={enabled}
+          aria-label="Browser push notifications"
+          onClick={() => void (enabled ? disable() : enable())}
+          disabled={!supported || permission === "denied" || pushLoading}
+          className={`
+            relative! h-6! w-11! shrink-0! rounded-full! transition-colors!
+            focus:outline-none! focus:ring-1! focus:ring-blue-600/20!
+            disabled:cursor-not-allowed! disabled:opacity-50!
+            ${enabled ? "bg-blue-600!" : "bg-gray-300!"}
+          `}
+        >
+          <span
+            className={`
+              absolute! top-1! h-4! w-4! rounded-full! bg-white! shadow-sm!
+              transition-transform! duration-200!
+              ${enabled ? "translate-x-6!" : "translate-x-1!"}
+            `}
+          />
+        </button>
+      </div>
+
+      {pushError && (
+        <p role="alert" className="mt-2! text-[10px]! text-red-600!">
+          {pushError}
+        </p>
+      )}
 
       {/* =====================================================
           FEEDBACK
