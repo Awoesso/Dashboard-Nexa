@@ -6,6 +6,7 @@ import { supabase } from "../lib/supabase";
 
 export interface CreateProductData {
   name: string;
+  store_id?: string;
 
   description?: string | null;
   category?: string | null;
@@ -80,6 +81,13 @@ export interface ProductAssets {
 
 const IMAGE_BUCKET = "product-covers";
 const DIGITAL_FILE_BUCKET = "product-files";
+
+export class StoreSetupRequiredError extends Error {
+  constructor() {
+    super("Create your store in store settings before creating products.");
+    this.name = "StoreSetupRequiredError";
+  }
+}
 
 const MAX_IMAGE_SIZE =
   5 * 1024 * 1024;
@@ -200,6 +208,32 @@ export const createProduct = async (
 ) => {
   validateProductData(product);
 
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    throw new Error("You must be signed in to create a product.");
+  }
+
+  let storeQuery = supabase
+    .from("stores")
+    .select("id, status")
+    .eq("owner_id", user.id);
+
+  if (product.store_id) {
+    storeQuery = storeQuery.eq("id", product.store_id);
+  }
+
+  const { data: store, error: storeError } =
+    await storeQuery.maybeSingle();
+
+  if (storeError) {
+    throw new Error(`Unable to verify the product store: ${storeError.message}`);
+  }
+
+  if (!store) {
+    throw new StoreSetupRequiredError();
+  }
+
   const slug =
     await createUniqueProductSlug(
       product.name,
@@ -211,6 +245,7 @@ export const createProduct = async (
    * in the current products table.
    */
   const payload = {
+    store_id: store.id,
     name: product.name.trim(),
 
     slug,

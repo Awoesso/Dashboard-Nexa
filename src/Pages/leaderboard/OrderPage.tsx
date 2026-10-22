@@ -15,14 +15,12 @@ import {
 } from "lucide-react";
 
 import {
-  getOrderById,
+  getOrderByStoreOrderId,
   getOrderItems,
   updateOrderStatus,
-  updatePaymentStatus,
   type Order,
   type OrderItem,
   type OrderStatus,
-  type PaymentStatus,
 } from "@/services/orders.service";
 
 /* -------------------------------------------------------------------------- */
@@ -179,7 +177,7 @@ const OrderPageSkeleton = () => {
 
 const OrderPage = () => {
   const navigate = useNavigate();
-  const { orderId } = useParams<{ orderId: string }>();
+  const { storeOrderId } = useParams<{ storeOrderId: string }>();
 
   const [order, setOrder] = useState<Order | null>(null);
   const [items, setItems] = useState<OrderItem[]>([]);
@@ -188,17 +186,15 @@ const OrderPage = () => {
   const [error, setError] = useState<string | null>(null);
 
   const [updatingOrder, setUpdatingOrder] = useState(false);
-  const [updatingPayment, setUpdatingPayment] = useState(false);
 
   const [showOrderStatus, setShowOrderStatus] = useState(false);
-  const [showPaymentStatus, setShowPaymentStatus] = useState(false);
 
   /* ------------------------------------------------------------------------ */
   /* Chargement                                                               */
   /* ------------------------------------------------------------------------ */
 
   const loadOrder = useCallback(async () => {
-    if (!orderId) {
+    if (!storeOrderId) {
       setError("Commande introuvable.");
       setLoading(false);
       return;
@@ -208,10 +204,7 @@ const OrderPage = () => {
       setLoading(true);
       setError(null);
 
-      const [orderData, itemsData] = await Promise.all([
-        getOrderById(orderId),
-        getOrderItems(orderId),
-      ]);
+      const orderData = await getOrderByStoreOrderId(storeOrderId);
 
       if (!orderData) {
         setError("Cette commande n'existe pas.");
@@ -219,6 +212,11 @@ const OrderPage = () => {
         setItems([]);
         return;
       }
+
+      const itemsData = await getOrderItems(
+        orderData.order_id,
+        orderData.store_id
+      );
 
       setOrder(orderData);
       setItems(itemsData);
@@ -233,7 +231,7 @@ const OrderPage = () => {
     } finally {
       setLoading(false);
     }
-  }, [orderId]);
+  }, [storeOrderId]);
 
   useEffect(() => {
     queueMicrotask(() => {
@@ -269,7 +267,8 @@ const OrderPage = () => {
       setShowOrderStatus(false);
 
       const updated = await updateOrderStatus({
-        orderId: order.id,
+        storeOrderId: order.store_order_id,
+        storeId: order.store_id,
         status,
       });
 
@@ -284,36 +283,6 @@ const OrderPage = () => {
       );
     } finally {
       setUpdatingOrder(false);
-    }
-  };
-
-  /* ------------------------------------------------------------------------ */
-  /* Statut paiement                                                          */
-  /* ------------------------------------------------------------------------ */
-
-  const handlePaymentStatus = async (status: PaymentStatus) => {
-    if (!order || updatingPayment) return;
-
-    try {
-      setUpdatingPayment(true);
-      setShowPaymentStatus(false);
-
-      const updated = await updatePaymentStatus({
-        orderId: order.id,
-        status,
-      });
-
-      setOrder(updated);
-    } catch (err) {
-      console.error(err);
-
-      setError(
-        err instanceof Error
-          ? err.message
-          : "Impossible de modifier le paiement."
-      );
-    } finally {
-      setUpdatingPayment(false);
     }
   };
 
@@ -887,67 +856,6 @@ const OrderPage = () => {
                 </div>
               </div>
 
-              <div className="relative mt-4">
-                <button
-                  type="button"
-                  disabled={updatingPayment}
-                  onClick={() =>
-                    setShowPaymentStatus(
-                      (current) => !current
-                    )
-                  }
-                  className="flex min-h-10 w-full items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white px-3 text-xs font-medium text-gray-800 transition hover:bg-gray-50 disabled:opacity-60"
-                >
-                  <span>
-                    {updatingPayment
-                      ? "Modification..."
-                      : "Modifier le paiement"}
-                  </span>
-
-                  <ChevronDown
-                    size={14}
-                    className={`transition-transform ${
-                      showPaymentStatus
-                        ? "rotate-180"
-                        : ""
-                    }`}
-                  />
-                </button>
-
-                {showPaymentStatus && (
-                  <div className="absolute z-20 mt-2 w-full overflow-hidden rounded-xl border border-gray-200 bg-white p-1 shadow-lg">
-                    {(
-                      [
-                        "pending",
-                        "paid",
-                        "failed",
-                        "refunded",
-                      ] as PaymentStatus[]
-                    ).map((status) => (
-                      <button
-                        key={status}
-                        type="button"
-                        onClick={() =>
-                          void handlePaymentStatus(
-                            status
-                          )
-                        }
-                        className="flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-left text-xs text-gray-700 transition hover:bg-gray-50"
-                      >
-                        {PAYMENT_LABELS[status]}
-
-                        {order.payment_status ===
-                          status && (
-                          <Check
-                            size={14}
-                            className="text-gray-900"
-                          />
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
             </section>
           </div>
         </div>

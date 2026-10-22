@@ -1,7 +1,6 @@
 import {
   Bell,
   Shield,
-  Store,
   User,
 } from "lucide-react";
 
@@ -17,11 +16,6 @@ const tabs = [
     id: "general" as SettingsTab,
     label: "General",
     icon: User,
-  },
-  {
-    id: "store" as SettingsTab,
-    label: "Store",
-    icon: Store,
   },
   {
     id: "notifications" as SettingsTab,

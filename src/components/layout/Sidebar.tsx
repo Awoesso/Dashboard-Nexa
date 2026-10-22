@@ -42,6 +42,7 @@ const Sidebar = ({
       icon: PlusCircle,
       path: "/dashboard/products/new",
     },
+    
     {
       label: "Marketplace",
       icon: Store,
@@ -50,7 +51,11 @@ const Sidebar = ({
   ];
 
   const creatorItems: SidebarItem[] = [
-  
+  {
+      label: "Ma boutique",
+      icon: Store,
+      path: "/dashboard/store",
+    },
     {
       label: "Finance",
       icon: Wallet,

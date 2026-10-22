@@ -45,6 +45,7 @@ const Dashboard = () => {
     profile,
     isLoading: profileLoading,
     error: profileError,
+    refreshProfile,
   } = useProfile();
   const {
     analytics,
@@ -55,6 +56,7 @@ const Dashboard = () => {
     periodOptions,
     loading: dashboardLoading,
     error: dashboardError,
+    refresh: refreshDashboard,
   } = useDashboard();
 
   // ================= LOADING SKELETON =================
@@ -219,6 +221,16 @@ const Dashboard = () => {
           <p className="mt-1 text-xs text-gray-500">
             {profileError ?? dashboardError}
           </p>
+          <button
+            type="button"
+            onClick={() => {
+              void refreshProfile();
+              void refreshDashboard();
+            }}
+            className="mt-4 rounded-lg bg-blue-600 px-3 py-2 text-xs font-medium text-white hover:bg-blue-700"
+          >
+            Réessayer
+          </button>
         </div>
       </div>
     );

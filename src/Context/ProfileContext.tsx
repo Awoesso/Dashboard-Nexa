@@ -2,6 +2,7 @@ import {
   createContext,
   useCallback,
   useEffect,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -41,9 +42,14 @@ export const ProfileProvider = ({
   const [error, setError] =
     useState<string | null>(null);
 
+  const requestSequence = useRef(0);
+
   const loadProfile = useCallback(async () => {
+    const requestId = ++requestSequence.current;
+
     if (!session?.user?.id) {
       setProfile(null);
+      setError(null);
       setIsLoading(false);
       return;
     }
@@ -51,18 +57,31 @@ export const ProfileProvider = ({
     setIsLoading(true);
     setError(null);
 
-    const result = await getProfile(
-      session.user.id
-    );
+    try {
+      const result = await getProfile(session.user.id);
 
-    if (result.error) {
-      setError(result.error);
+      if (requestId !== requestSequence.current) return;
+
+      if (result.error) {
+        setError(result.error);
+        setProfile(null);
+      } else {
+        setProfile(result.data);
+      }
+    } catch (profileError: unknown) {
+      if (requestId !== requestSequence.current) return;
+
+      setError(
+        profileError instanceof Error
+          ? profileError.message
+          : "Impossible de charger votre profil."
+      );
       setProfile(null);
-    } else {
-      setProfile(result.data);
+    } finally {
+      if (requestId === requestSequence.current) {
+        setIsLoading(false);
+      }
     }
-
-    setIsLoading(false);
   }, [session?.user?.id]);
 
   useEffect(() => {

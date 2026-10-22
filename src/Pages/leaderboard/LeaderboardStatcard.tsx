@@ -12,7 +12,6 @@ import {
 // ==========================================
 
 export interface Order {
-  id: string;
   total_amount: number;
   order_status: string;
   created_at: string;

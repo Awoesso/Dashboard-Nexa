@@ -1,17 +1,21 @@
 import {
   createBrowserRouter,
   Navigate,
+  useParams,
 } from "react-router-dom";
 import { Suspense } from "react";
 import DashboardLayout from "./layouts/DashboardLayout";
 import { ProtectedRoute, PublicRoute } from "./components/ProtectedRoute";
 import {
   Dashboard,
+  DskStoreEditorView,
   Leaderboard,
   Marketplace,
   MarketplaceProductDetails,
+  MyStore,
   OrderPage,
   ProductsNew,
+  PublicHome,
   RouteLoading,
   Settings,
   SignIn,
@@ -20,11 +24,29 @@ import {
 import NotFound from "./Pages/NotFound";
 import ErrorFallback from "./Pages/ErrorFallback";
 
+const EditorRouteWrapper = () => {
+  const { slug } = useParams<{ slug: string }>();
+  if (!slug) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-slate-100 text-xs text-slate-600">
+        Identifiant de boutique manquant
+      </div>
+    );
+  }
+  return <DskStoreEditorView slug={slug} />;
+};
+
 export const router = createBrowserRouter([
   {
     path: "/",
     errorElement: <ErrorFallback />,
-    element: <Navigate to="/dashboard" replace />,
+    element: (
+      <PublicRoute>
+        <Suspense fallback={<RouteLoading />}>
+          <PublicHome />
+        </Suspense>
+      </PublicRoute>
+    ),
   },
 
   {
@@ -93,6 +115,15 @@ export const router = createBrowserRouter([
           </Suspense>
         ),
       },
+      {
+        path: "store",
+        errorElement: <ErrorFallback />,
+        element: (
+          <Suspense fallback={<RouteLoading />}>
+            <MyStore />
+          </Suspense>
+        ),
+      },
        {
         path: "leaderboard",
         errorElement: <ErrorFallback />,
@@ -112,7 +143,7 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "leaderboard/orders/:orderId",
+        path: "leaderboard/orders/:storeOrderId",
         errorElement: <ErrorFallback />,
         element: (
           <Suspense fallback={<RouteLoading />}>
@@ -140,6 +171,18 @@ export const router = createBrowserRouter([
       },
       
     ],
+  },
+
+  {
+    path: "/editeur/:slug",
+    errorElement: <ErrorFallback />,
+    element: (
+      <ProtectedRoute>
+        <Suspense fallback={<RouteLoading />}>
+          <EditorRouteWrapper />
+        </Suspense>
+      </ProtectedRoute>
+    ),
   },
 
   // Catch-all 404 route

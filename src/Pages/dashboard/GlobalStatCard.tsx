@@ -50,7 +50,7 @@ const GlobalStatCard = ({ stats }: GlobalStatCardProps) => {
         mt-4
         grid
         min-w-0
-        grid-cols-1
+        grid-cols-2
         gap-3
         sm:grid-cols-2
         xl:grid-cols-4

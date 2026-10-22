@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import GeneralSettings from "./GeneralSettings";
-import StoreSettings from "./StoreSettings";
 import NotificationSettings from "./NotificationSettings";
 import SecuritySettings from "./SecuritySettings";
 
@@ -9,21 +9,26 @@ import SettingsHeader from "./SettingsHeader";
 
 export type SettingsTab =
   | "general"
-  | "store"
   | "notifications"
   | "security";
 
 const Settings = () => {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const isLegacyStoreTab = searchParams.get("tab") === "store";
   const [activeTab, setActiveTab] =
     useState<SettingsTab>("general");
+
+  useEffect(() => {
+    if (isLegacyStoreTab) {
+      navigate("/dashboard/store", { replace: true });
+    }
+  }, [isLegacyStoreTab, navigate]);
 
   const renderContent = () => {
     switch (activeTab) {
       case "general":
         return <GeneralSettings />;
-
-      case "store":
-        return <StoreSettings />;
 
       case "notifications":
         return <NotificationSettings />;

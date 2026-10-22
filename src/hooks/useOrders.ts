@@ -336,7 +336,7 @@ export const useOrders = (): UseOrdersReturn => {
 
         setOrders((currentOrders) => {
           const exists = currentOrders.some(
-            (order) => order.id === newOrder.id
+            (order) => order.store_order_id === newOrder.store_order_id
           );
 
           if (exists) {
@@ -357,7 +357,7 @@ export const useOrders = (): UseOrdersReturn => {
         setOrders((currentOrders) =>
           sortOrders(
             currentOrders.map((order) =>
-              order.id === updatedOrder.id
+              order.store_order_id === updatedOrder.store_order_id
                 ? updatedOrder
                 : order
             )
@@ -366,12 +366,12 @@ export const useOrders = (): UseOrdersReturn => {
       },
 
       /* DELETE */
-      (deletedOrder) => {
+      (deletedOrderId) => {
         if (!mounted) return;
 
         setOrders((currentOrders) =>
           currentOrders.filter(
-            (order) => order.id !== deletedOrder.id
+            (order) => order.store_order_id !== deletedOrderId
           )
         );
       }

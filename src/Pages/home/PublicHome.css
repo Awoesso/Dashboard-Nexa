@@ -1,0 +1,50 @@
+
+@import "tailwindcss";
+
+
+
+.public-home {
+  /* Palette Bleu (100 -> 900) + Blanc */
+  --blue-100: #dbeafe;
+  --blue-200: #bfdbfe;
+  --blue-300: #93c5fd;
+  --blue-400: #60a5fa;
+  --blue-500: #3b82f6;
+  --blue-600: #2563eb;
+  --blue-700: #1d4ed8;
+  --blue-800: #1e40af;
+  --blue-900: #1e3a8a;
+  --white: #ffffff;
+--rich-black: #050b14;
+
+  font-family: 'Geist', Arial, sans-serif;
+  background-color: var(--white);
+  color: var(--rich-black);
+  min-height: 100vh;
+  padding: 0 ;
+}@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* État initial : invisible et décalé */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+/* Déclenchement automatique dès que le JS ajoute .active */
+.reveal.active {
+  animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Délais pour l'effet en cascade */
+.reveal.active.delay-100 { animation-delay: 150ms; }
+.reveal.active.delay-200 { animation-delay: 300ms; }
+.reveal.active.delay-300 { animation-delay: 450ms; }

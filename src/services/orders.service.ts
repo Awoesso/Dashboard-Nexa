@@ -19,7 +19,9 @@ export type PaymentStatus =
   | "refunded";
 
 export interface Order {
-  id: string;
+  store_order_id: string;
+  order_id: string;
+  store_id: string;
   order_number: string;
   customer_name: string;
   customer_phone: string;
@@ -35,7 +37,8 @@ export interface Order {
 }
 
 export interface UpdateOrderStatusInput {
-  orderId: string;
+  storeOrderId: string;
+  storeId: string;
   status: OrderStatus;
 }
 
@@ -44,10 +47,10 @@ export interface UpdatePaymentStatusInput {
   status: PaymentStatus;
 }
 
-
 export interface OrderItem {
   id: string;
   order_id: string;
+  store_id: string | null;
   product_id: string | null;
   product_name: string;
   unit_price: number;
@@ -57,13 +60,19 @@ export interface OrderItem {
 }
 
 export async function getOrderItems(
-  orderId: string
+  orderId: string,
+  storeId: string
 ): Promise<OrderItem[]> {
+  if (!orderId || !storeId) {
+    throw new Error("Les identifiants de la commande et de la boutique sont requis.");
+  }
+
   const { data, error } = await supabase
     .from("order_items")
     .select(`
       id,
       order_id,
+      store_id,
       product_id,
       product_name,
       unit_price,
@@ -72,6 +81,7 @@ export async function getOrderItems(
       created_at
     `)
     .eq("order_id", orderId)
+    .eq("store_id", storeId)
     .order("created_at", { ascending: true });
 
   if (error) {
@@ -88,20 +98,58 @@ export async function getOrderItems(
 /* -------------------------------------------------------------------------- */
 
 const ORDER_COLUMNS = `
-  id,
+  store_order_id,
+  order_id,
+  store_id,
+  store_total,
+  store_currency,
+  store_order_created_at,
   order_number,
   customer_name,
   customer_phone,
   shipping_address,
   city,
-  total_amount,
-  currency,
   payment_method,
   payment_status,
   order_status,
-  notes,
-  created_at
+  notes
 `;
+
+interface VendorOrderRow {
+  store_order_id: string;
+  order_id: string;
+  store_id: string;
+  store_total: number | string;
+  store_currency: string;
+  store_order_created_at: string;
+  order_number: string;
+  customer_name: string;
+  customer_phone: string;
+  shipping_address: string;
+  city: string;
+  payment_method: string;
+  payment_status: PaymentStatus | string;
+  order_status: OrderStatus | string;
+  notes: string | null;
+}
+
+const mapVendorOrder = (row: VendorOrderRow): Order => ({
+  store_order_id: row.store_order_id,
+  order_id: row.order_id,
+  store_id: row.store_id,
+  order_number: row.order_number,
+  customer_name: row.customer_name,
+  customer_phone: row.customer_phone,
+  shipping_address: row.shipping_address,
+  city: row.city,
+  total_amount: Number(row.store_total),
+  currency: row.store_currency,
+  payment_method: row.payment_method,
+  payment_status: row.payment_status,
+  order_status: row.order_status,
+  notes: row.notes,
+  created_at: row.store_order_created_at,
+});
 
 /* -------------------------------------------------------------------------- */
 /* Récupérer toutes les commandes                         A                    */
@@ -109,9 +157,9 @@ const ORDER_COLUMNS = `
 
 export async function getOrders(): Promise<Order[]> {
   const { data, error } = await supabase
-    .from("orders")
+    .from("vendor_orders")
     .select(ORDER_COLUMNS)
-    .order("created_at", { ascending: false });
+    .order("store_order_created_at", { ascending: false });
 
   if (error) {
     console.error("Erreur récupération commandes :", error);
@@ -120,24 +168,24 @@ export async function getOrders(): Promise<Order[]> {
     );
   }
 
-  return (data ?? []) as Order[];
+  return ((data ?? []) as VendorOrderRow[]).map(mapVendorOrder);
 }
 
 /* -------------------------------------------------------------------------- */
 /* Récupérer une commande                                                     */
 /* -------------------------------------------------------------------------- */
 
-export async function getOrderById(
-  orderId: string
+export async function getOrderByStoreOrderId(
+  storeOrderId: string
 ): Promise<Order | null> {
-  if (!orderId) {
-    throw new Error("L'identifiant de la commande est requis.");
+  if (!storeOrderId) {
+    throw new Error("L'identifiant de la sous-commande est requis.");
   }
 
   const { data, error } = await supabase
-    .from("orders")
+    .from("vendor_orders")
     .select(ORDER_COLUMNS)
-    .eq("id", orderId)
+    .eq("store_order_id", storeOrderId)
     .maybeSingle();
 
   if (error) {
@@ -147,7 +195,7 @@ export async function getOrderById(
     );
   }
 
-  return data as Order | null;
+  return data ? mapVendorOrder(data as VendorOrderRow) : null;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -155,21 +203,23 @@ export async function getOrderById(
 /* -------------------------------------------------------------------------- */
 
 export async function updateOrderStatus({
-  orderId,
+  storeOrderId,
+  storeId,
   status,
 }: UpdateOrderStatusInput): Promise<Order> {
-  if (!orderId) {
-    throw new Error("L'identifiant de la commande est requis.");
+  if (!storeOrderId || !storeId) {
+    throw new Error("Les identifiants de la sous-commande et de la boutique sont requis.");
   }
 
   const { data, error } = await supabase
-    .from("orders")
+    .from("store_orders")
     .update({
       order_status: status,
     })
-    .eq("id", orderId)
-    .select(ORDER_COLUMNS)
-    .single();
+    .eq("id", storeOrderId)
+    .eq("store_id", storeId)
+    .select("id")
+    .maybeSingle();
 
   if (error) {
     console.error("Erreur modification statut commande :", error);
@@ -178,38 +228,27 @@ export async function updateOrderStatus({
     );
   }
 
-  return data as Order;
-}
+  if (!data) {
+    throw new Error("Sous-commande introuvable ou non accessible pour cette boutique.");
+  }
 
-/* -------------------------------------------------------------------------- */
-/* Modifier le statut du paiement                                             */
-/* -------------------------------------------------------------------------- */
+  const order = await getOrderByStoreOrderId(storeOrderId);
+
+  if (!order) {
+    throw new Error("Commande introuvable.");
+  }
+
+  return order;
+}
 
 export async function updatePaymentStatus({
   orderId,
-  status,
 }: UpdatePaymentStatusInput): Promise<Order> {
   if (!orderId) {
     throw new Error("L'identifiant de la commande est requis.");
   }
 
-  const { data, error } = await supabase
-    .from("orders")
-    .update({
-      payment_status: status,
-    })
-    .eq("id", orderId)
-    .select(ORDER_COLUMNS)
-    .single();
-
-  if (error) {
-    console.error("Erreur modification paiement :", error);
-    throw new Error(
-      `Impossible de modifier le paiement : ${error.message}`
-    );
-  }
-
-  return data as Order;
+  throw new Error("Le statut du paiement doit être modifié par le backend de paiement.");
 }
 
 /* -------------------------------------------------------------------------- */
@@ -219,7 +258,7 @@ export async function updatePaymentStatus({
 export function subscribeToOrders(
   onInsert: (order: Order) => void,
   onUpdate?: (order: Order) => void,
-  onDelete?: (order: Order) => void
+  onDelete?: (storeOrderId: string) => void
 ) {
   const channel = supabase
     .channel("nexa-orders")
@@ -228,10 +267,15 @@ export function subscribeToOrders(
       {
         event: "INSERT",
         schema: "public",
-        table: "orders",
+        table: "store_orders",
       },
       (payload) => {
-        onInsert(payload.new as Order);
+        const storeOrderId = payload.new.id;
+        if (typeof storeOrderId === "string") {
+          void getOrderByStoreOrderId(storeOrderId).then((order) => {
+            if (order) onInsert(order);
+          });
+        }
       }
     )
     .on(
@@ -239,10 +283,15 @@ export function subscribeToOrders(
       {
         event: "UPDATE",
         schema: "public",
-        table: "orders",
+        table: "store_orders",
       },
       (payload) => {
-        onUpdate?.(payload.new as Order);
+        const storeOrderId = payload.new.id;
+        if (typeof storeOrderId === "string") {
+          void getOrderByStoreOrderId(storeOrderId).then((order) => {
+            if (order) onUpdate?.(order);
+          });
+        }
       }
     )
     .on(
@@ -250,10 +299,11 @@ export function subscribeToOrders(
       {
         event: "DELETE",
         schema: "public",
-        table: "orders",
+        table: "store_orders",
       },
       (payload) => {
-        onDelete?.(payload.old as Order);
+        const storeOrderId = payload.old.id;
+        if (typeof storeOrderId === "string") onDelete?.(storeOrderId);
       }
     )
     .subscribe((status) => {
@@ -280,15 +330,15 @@ export interface WalletSummary {
 
 export async function getWalletSummary(): Promise<WalletSummary> {
   const { data, error } = await supabase
-    .from("orders")
+    .from("vendor_orders")
     .select(`
-      total_amount,
-      currency,
+      store_total,
+      store_currency,
       payment_status,
       order_status,
-      created_at
+      store_order_created_at
     `)
-    .order("created_at", { ascending: false });
+    .order("store_order_created_at", { ascending: false });
 
   if (error) {
     console.error("Erreur récupération wallet :", error);
@@ -311,16 +361,16 @@ export async function getWalletSummary(): Promise<WalletSummary> {
   );
 
   const balance = validPaidOrders.reduce(
-    (total, order) => total + Number(order.total_amount || 0),
+    (total, order) => total + Number(order.store_total || 0),
     0
   );
 
   const currency =
-    validPaidOrders[0]?.currency ??
-    orders[0]?.currency ??
+    validPaidOrders[0]?.store_currency ??
+    orders[0]?.store_currency ??
     "XOF";
 
-  const lastActivity = orders[0]?.created_at ?? null;
+  const lastActivity = orders[0]?.store_order_created_at ?? null;
 
   return {
     balance,

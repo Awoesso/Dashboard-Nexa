@@ -4,11 +4,12 @@ import {
   useState,
   type FormEvent,
 } from "react";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Store } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 import {
   createProductWithAssets,
+  StoreSetupRequiredError,
 } from "@/services/productsService";
 
 import ProductHeader from "@/Pages/products/ProductHeader";
@@ -135,6 +136,9 @@ const ProductsNew = () => {
   const [isCreating, setIsCreating] =
     useState(false);
 
+  const [needsStoreSetup, setNeedsStoreSetup] =
+    useState(false);
+
   /* =======================================================
      ASSETS
   ======================================================= */
@@ -227,6 +231,7 @@ const ProductsNew = () => {
 
       return next;
     });
+    setNeedsStoreSetup(false);
   };
 
   /* =======================================================
@@ -538,6 +543,7 @@ const ProductsNew = () => {
           ? error.message
           : "Unable to create the product.";
 
+      setNeedsStoreSetup(error instanceof StoreSetupRequiredError);
       setErrors({
         submit: message,
       });
@@ -670,6 +676,17 @@ const ProductsNew = () => {
               <p className="min-w-0! flex-1!">
                 {errors.submit}
               </p>
+
+              {needsStoreSetup && (
+                <button
+                  type="button"
+                  onClick={() => navigate("/dashboard/store")}
+                  className="inline-flex! shrink-0! items-center! gap-1.5! rounded-lg! border! border-red-300! bg-white! px-3! py-2! text-[11px]! font-semibold! text-red-700! hover:bg-red-100!"
+                >
+                  <Store size={14} />
+                  Create store
+                </button>
+              )}
             </div>
           )}
 

@@ -10,14 +10,16 @@ type PushSubscriptionRecord = {
 };
 
 type PushRequestBody = {
-  user_id?: string;
-  userId?: string;
-  title?: string;
-  body?: string;
-  type?: string;
-  order_id?: string;
-  orderId?: string;
-  metadata?: Record<string, unknown>;
+  notification_id?: string;
+};
+
+type NotificationPushRecord = {
+  id: string;
+  recipient_id: string;
+  title: string;
+  message: string;
+  type: string;
+  metadata: Record<string, unknown> | null;
 };
 
 const jsonResponse = (
@@ -56,43 +58,22 @@ const isValidRequestBody = (
 
   const candidate = body as PushRequestBody;
 
-  const userId =
-    normalizeString(candidate.user_id) ??
-    normalizeString(candidate.userId);
-
-  const title = normalizeString(candidate.title);
-  const bodyText = normalizeString(candidate.body);
-
-  if (!userId) {
-    return false;
-  }
-
-  if (!title || !bodyText) {
-    return false;
-  }
-
-  return true;
+  return Boolean(normalizeString(candidate.notification_id));
 };
 
 const sanitizeNotificationData = (
-  body: PushRequestBody
+  notification: NotificationPushRecord
 ): { type: string; orderId?: string } => {
-  const rawType = normalizeString(body.type);
+  const rawType = normalizeString(notification.type);
   const orderId =
-    normalizeString(body.order_id) ??
-    normalizeString(body.orderId) ??
-    (body.metadata &&
-    typeof body.metadata === "object"
-      ? normalizeString(
-          body.metadata.orderId as unknown
-        ) ??
-        normalizeString(
-          body.metadata.order_id as unknown
-        )
+    (notification.metadata &&
+    typeof notification.metadata === "object"
+      ? normalizeString(notification.metadata.orderId) ??
+        normalizeString(notification.metadata.order_id)
       : null);
 
   return {
-    type: rawType === "order" ? "order" : "info",
+    type: rawType === "payment" ? "payment" : rawType === "order" ? "order" : "info",
     ...(orderId ? { orderId } : {}),
   };
 };
@@ -184,9 +165,36 @@ Deno.serve(async (req: Request) => {
     }
   );
 
-  const userId =
-    normalizeString(payload.user_id) ??
-    normalizeString(payload.userId);
+  const notificationId = normalizeString(payload.notification_id);
+
+  if (!notificationId) {
+    return jsonResponse(400, {
+      ok: false,
+      error: "Invalid notification id",
+    });
+  }
+
+  const { data: notificationData, error: notificationError } = await supabase
+    .from("notifications")
+    .select("id, recipient_id, title, message, type, metadata")
+    .eq("id", notificationId)
+    .maybeSingle();
+
+  if (notificationError) {
+    return jsonResponse(500, {
+      ok: false,
+      error: "Unable to load notification",
+    });
+  }
+
+  const notification = notificationData as NotificationPushRecord | null;
+
+  if (!notification?.recipient_id) {
+    return jsonResponse(404, {
+      ok: false,
+      error: "Notification recipient not found",
+    });
+  }
 
   const publicKey =
     Deno.env.get("VAPID_PUBLIC_KEY");
@@ -212,7 +220,7 @@ Deno.serve(async (req: Request) => {
       .select(
         "id, user_id, endpoint, p256dh, auth"
       )
-      .eq("user_id", userId);
+      .eq("user_id", notification.recipient_id);
 
   if (error) {
     return jsonResponse(500, {
@@ -232,9 +240,9 @@ Deno.serve(async (req: Request) => {
   }
 
   const notificationPayload = {
-    title: payload.title,
-    body: payload.body,
-    data: sanitizeNotificationData(payload),
+    title: notification.title,
+    body: notification.message,
+    data: sanitizeNotificationData(notification),
   };
 
   const sent = [] as string[];

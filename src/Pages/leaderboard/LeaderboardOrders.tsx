@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 
 export interface LeaderboardOrder {
-  id: string;
+  store_order_id: string;
   order_number: string;
   customer_name: string;
   customer_phone: string;
@@ -26,7 +26,7 @@ interface LeaderboardOrdersProps {
   orders?: LeaderboardOrder[];
   loading?: boolean;
   error?: string | null;
-  onOrderClick?: (orderId: string) => void;
+  onOrderClick?: (storeOrderId: string) => void;
 }
 
 type StatusFilter =
@@ -314,9 +314,9 @@ const LeaderboardOrders: React.FC<LeaderboardOrdersProps> = ({
             <div className="divide-y divide-gray-100">
               {paginatedOrders.map((order) => (
                 <button
-                  key={order.id}
+                  key={order.store_order_id}
                   type="button"
-                  onClick={() => onOrderClick?.(order.id)}
+                  onClick={() => onOrderClick?.(order.store_order_id)}
                   className="
                     group
                     w-full

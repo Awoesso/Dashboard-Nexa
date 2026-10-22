@@ -21,7 +21,7 @@ const Leaderboard = () => {
     <LeaderboardOrders
       orders={orders}
       loading={loading}
-      onOrderClick={(orderId) => navigate(`/dashboard/leaderboard/orders/${orderId}`)}
+      onOrderClick={(storeOrderId) => navigate(`/dashboard/leaderboard/orders/${storeOrderId}`)}
     />
   </>
 )}

@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabase";
-import type { Order, OrderItem } from "./orders.service";
+import { getOrders, type Order, type OrderItem } from "./orders.service";
 
 /* ============================================================================
    TYPES
@@ -497,9 +497,17 @@ const filterOrders = (
 
 const filterOrderItems = (
   items: OrderItem[],
-  validOrderIds: Set<string>
+  validOrders: Order[]
 ): OrderItem[] => {
-  return items.filter((item) => validOrderIds.has(item.order_id));
+  const validOrderStoreKeys = new Set(
+    validOrders.map((order) => `${order.order_id}:${order.store_id}`)
+  );
+
+  return items.filter(
+    (item) =>
+      item.store_id !== null &&
+      validOrderStoreKeys.has(`${item.order_id}:${item.store_id}`)
+  );
 };
 
 /* ============================================================================
@@ -532,13 +540,9 @@ const calculatePeriodStats = (
       ? earnings / validOrders.length
       : 0;
 
-  const validOrderIds = new Set(
-    validOrders.map((order) => order.id)
-  );
-
   const sales = filterOrderItems(
     orderItems,
-    validOrderIds
+    validOrders
   ).reduce(
     (total, item) => total + safeNumber(item.quantity),
     0
@@ -584,40 +588,55 @@ const getStoreCreatedAt = async (): Promise<string | null> => {
   return (data as DashboardProfileRow | null)?.created_at ?? null;
 };
 
+interface DashboardStoreProductsRow {
+  products: DashboardProductRow[] | null;
+}
+
+const getDashboardProducts = async (): Promise<DashboardProductRow[]> => {
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) return [];
+
+  const { data, error } = await supabase
+    .from("stores")
+    .select(`
+      products (
+        id,
+        name,
+        price,
+        currency,
+        status,
+        cover_image_url,
+        created_at
+      )
+    `)
+    .eq("owner_id", user.id)
+    .maybeSingle();
+
+  if (error) {
+    throw new Error(`Impossible de charger les produits : ${error.message}`);
+  }
+
+  return ((data as DashboardStoreProductsRow | null)?.products ?? [])
+    .sort((left, right) => right.created_at.localeCompare(left.created_at));
+};
+
 const getDashboardSnapshot = async (): Promise<DashboardSnapshot> => {
   const [
-    ordersResult,
+    orders,
     orderItemsResult,
-    productsResult,
+    products,
     notificationsResult,
     storeCreatedAt,
   ] = await Promise.all([
-    supabase
-      .from("orders")
-      .select(`
-        id,
-        order_number,
-        customer_name,
-        customer_phone,
-        shipping_address,
-        city,
-        total_amount,
-        currency,
-        payment_method,
-        payment_status,
-        order_status,
-        notes,
-        created_at
-      `)
-      .order("created_at", {
-        ascending: false,
-      }),
+    getOrders(),
 
     supabase
       .from("order_items")
       .select(`
         id,
         order_id,
+        store_id,
         product_id,
         product_name,
         unit_price,
@@ -629,20 +648,7 @@ const getDashboardSnapshot = async (): Promise<DashboardSnapshot> => {
         ascending: false,
       }),
 
-    supabase
-      .from("products")
-      .select(`
-        id,
-        name,
-        price,
-        currency,
-        status,
-        cover_image_url,
-        created_at
-      `)
-      .order("created_at", {
-        ascending: false,
-      }),
+    getDashboardProducts(),
 
     supabase
       .from("notifications")
@@ -663,21 +669,9 @@ const getDashboardSnapshot = async (): Promise<DashboardSnapshot> => {
     getStoreCreatedAt(),
   ]);
 
-  if (ordersResult.error) {
-    throw new Error(
-      `Impossible de charger les commandes : ${ordersResult.error.message}`
-    );
-  }
-
   if (orderItemsResult.error) {
     throw new Error(
       `Impossible de charger les articles de commande : ${orderItemsResult.error.message}`
-    );
-  }
-
-  if (productsResult.error) {
-    throw new Error(
-      `Impossible de charger les produits : ${productsResult.error.message}`
     );
   }
 
@@ -693,9 +687,9 @@ const getDashboardSnapshot = async (): Promise<DashboardSnapshot> => {
   }
 
   return {
-    orders: (ordersResult.data ?? []) as Order[],
+    orders,
     orderItems: (orderItemsResult.data ?? []) as OrderItem[],
-    products: (productsResult.data ?? []) as DashboardProductRow[],
+    products,
     notifications:
       (notificationsResult.data ??
         []) as DashboardNotificationRow[],
@@ -1094,15 +1088,11 @@ export const getTopSellingProducts = async (
     Math.min(limit, 50)
   );
 
-  const validOrderIds = new Set(
-    snapshot.orders
-      .filter(isRevenueOrder)
-      .map((order) => order.id)
-  );
+  const validOrders = snapshot.orders.filter(isRevenueOrder);
 
   const validItems = filterOrderItems(
     snapshot.orderItems,
-    validOrderIds
+    validOrders
   );
 
   const productsMap = new Map<
@@ -1188,7 +1178,7 @@ const buildOrderActivity = (
   order: Order
 ): DashboardActivity => {
   return {
-    id: `order-${order.id}`,
+    id: `order-${order.store_order_id}`,
     type: "order",
     title: `Commande #${order.order_number}`,
     description: `${order.customer_name} • ${safeNumber(
@@ -1196,7 +1186,9 @@ const buildOrderActivity = (
     ).toLocaleString("fr-FR")} ${order.currency}`,
     createdAt: order.created_at,
     metadata: {
-      orderId: order.id,
+      orderId: order.order_id,
+      storeOrderId: order.store_order_id,
+      storeId: order.store_id,
       orderNumber: order.order_number,
       status: order.order_status,
       paymentStatus: order.payment_status,
@@ -1397,15 +1389,11 @@ export const getDashboardData = async (
      Top products
   -------------------------------------------------------------------------- */
 
-  const validOrderIds = new Set(
-    snapshot.orders
-      .filter(isRevenueOrder)
-      .map((order) => order.id)
-  );
+  const validOrders = snapshot.orders.filter(isRevenueOrder);
 
   const validItems = filterOrderItems(
     snapshot.orderItems,
-    validOrderIds
+    validOrders
   );
 
   const productsMap = new Map<

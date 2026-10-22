@@ -129,6 +129,7 @@ const mapProduct = (
   };
 };
 
+
 /* =========================================================
    GET DELIVERED SALES BY PRODUCT
 ========================================================= */
@@ -137,28 +138,23 @@ export async function getDeliveredSalesByProduct(): Promise<
   Record<string, number>
 > {
   const { data, error } = await supabase
-    .from("order_items")
-    .select(`
-      product_id,
-      quantity,
-      orders!inner (
-        order_status
-      )
-    `)
-    .eq("orders.order_status", "delivered")
-    .not("product_id", "is", null);
+    .from("public_product_sales")
+    .select("product_id, quantity");
 
   if (error) {
-    throw new Error(
-      `Impossible de récupérer les ventes livrées : ${error.message}`,
+    console.warn(
+      "Ventes indisponibles pour le moment :",
+      error.message,
     );
+
+    // Les ventes ne doivent pas bloquer
+    // l'affichage des produits.
+    return {};
   }
 
   const salesByProduct: Record<string, number> = {};
 
   for (const item of data ?? []) {
-    if (!item.product_id) continue;
-
     const quantity = Number(item.quantity) || 0;
 
     salesByProduct[item.product_id] =
@@ -167,6 +163,7 @@ export async function getDeliveredSalesByProduct(): Promise<
 
   return salesByProduct;
 }
+
 
 /* =========================================================
    GET ALL PRODUCTS
