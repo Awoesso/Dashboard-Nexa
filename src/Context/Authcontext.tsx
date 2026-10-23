@@ -10,7 +10,6 @@ import type { Session } from "@supabase/supabase-js";
 
 import { supabase } from "@/lib/supabase";
 import { rateLimit } from "@/lib/rateLimiting";
-import { storeCSRFToken } from "@/lib/csrf";
 
 interface AuthResponse {
   success: boolean;
@@ -28,6 +27,12 @@ type AuthContextType = {
     firstName: string,
     lastName: string
   ) => Promise<AuthResponse>;
+  verifySignupOtp: (email: string, token: string) => Promise<AuthResponse>;
+  resendSignupOtp: (email: string) => Promise<AuthResponse>;
+  signInWithOAuth: (provider: "google") => Promise<AuthResponse>;
+  requestPasswordReset: (email: string) => Promise<AuthResponse>;
+  updatePassword: (password: string) => Promise<AuthResponse>;
+  signOutOtherSessions: () => Promise<AuthResponse>;
 
   signInUser: (
     email: string,
@@ -80,9 +85,6 @@ export const AuthcontextProvider = ({
         };
       }
 
-      // CSRF token
-      storeCSRFToken();
-
       // Create Supabase account
       const { data, error } = await supabase.auth.signUp({
         email: cleanEmail,
@@ -122,6 +124,129 @@ export const AuthcontextProvider = ({
     }
   };
 
+  const verifySignupOtp = async (
+    email: string,
+    token: string,
+  ): Promise<AuthResponse> => {
+    try {
+      const { data, error } = await supabase.auth.verifyOtp({
+        email: email.trim(),
+        token: token.trim(),
+        type: "signup",
+      });
+
+      if (error) {
+        return { success: false, error: error.message };
+      }
+
+      return { success: true, data };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : "Unable to verify this code.",
+      };
+    }
+  };
+
+  const resendSignupOtp = async (email: string): Promise<AuthResponse> => {
+    try {
+      const cleanEmail = email.trim();
+      const rateLimitResult = rateLimit(`resend-signup-${cleanEmail}`, 3, 60000);
+
+      if (!rateLimitResult.allowed) {
+        return {
+          success: false,
+          error: `Too many requests. Try again in ${rateLimitResult.waitSeconds} seconds.`,
+        };
+      }
+
+      const { error } = await supabase.auth.resend({
+        type: "signup",
+        email: cleanEmail,
+      });
+
+      return error
+        ? { success: false, error: error.message }
+        : { success: true };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : "Unable to resend the code.",
+      };
+    }
+  };
+
+  const signInWithOAuth = async (
+    provider: "google",
+  ): Promise<AuthResponse> => {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: { redirectTo: `${window.location.origin}/dashboard` },
+      });
+
+      return error
+        ? { success: false, error: error.message }
+        : { success: true };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : "Unable to start sign-in.",
+      };
+    }
+  };
+
+  const requestPasswordReset = async (email: string): Promise<AuthResponse> => {
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(
+        email.trim(),
+        { redirectTo: `${window.location.origin}/reset-password` },
+      );
+
+      return error
+        ? { success: false, error: error.message }
+        : { success: true };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : "Unable to request a reset.",
+      };
+    }
+  };
+
+  const updatePassword = async (password: string): Promise<AuthResponse> => {
+    try {
+      const { error } = await supabase.auth.updateUser({ password });
+      if (error) {
+        return { success: false, error: error.message };
+      }
+
+      const { error: revokeError } = await supabase.auth.signOut({ scope: "others" });
+      return revokeError
+        ? { success: false, error: "Mot de passe changé, mais les autres sessions n'ont pas pu être révoquées." }
+        : { success: true };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : "Unable to update the password.",
+      };
+    }
+  };
+
+  const signOutOtherSessions = async (): Promise<AuthResponse> => {
+    try {
+      const { error } = await supabase.auth.signOut({ scope: "others" });
+      return error
+        ? { success: false, error: error.message }
+        : { success: true };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : "Unable to revoke other sessions.",
+      };
+    }
+  };
+
   // =========================
   // SIGN IN
   // =========================
@@ -146,9 +271,6 @@ export const AuthcontextProvider = ({
           error: `Too many login attempts. Please try again in ${rateLimitResult.waitSeconds} seconds.`,
         };
       }
-
-      // CSRF token
-      storeCSRFToken();
 
       // Login
       const { data, error } =
@@ -261,6 +383,12 @@ export const AuthcontextProvider = ({
         session,
         isLoading,
         signUpNewUser,
+        verifySignupOtp,
+        resendSignupOtp,
+        signInWithOAuth,
+        requestPasswordReset,
+        updatePassword,
+        signOutOtherSessions,
         signInUser,
         signOut,
       }}

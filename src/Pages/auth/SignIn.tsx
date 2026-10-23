@@ -2,15 +2,19 @@ import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { UserAuth } from "../../Context/Authcontext";
+import AuthFeedback from "./AuthFeedback";
+
+type SignInField = "email" | "password";
 
 const SignIn = () => {
   const navigate = useNavigate();
 
-  const { signInUser } = UserAuth();
+  const { signInUser, signInWithOAuth } = UserAuth();
 
   const [showPassword, setShowPassword] = useState(false);
 
-  const [error, setError] = useState("");
+  const [error, setError] = useState<{ title: string; message: string } | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Partial<Record<SignInField, string>>>({});
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -23,6 +27,10 @@ const SignIn = () => {
   ) => {
     const { name, value } = e.target;
 
+    if (name === "email" || name === "password") {
+      setFieldErrors((current) => ({ ...current, [name]: undefined }));
+    }
+    setError(null);
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -34,16 +42,24 @@ const SignIn = () => {
   ) => {
     e.preventDefault();
 
-    setError("");
+    setError(null);
+    const nextErrors: Partial<Record<SignInField, string>> = {};
 
     const { email, password } = formData;
 
-    // =========================
-    // VÉRIFICATION DES CHAMPS
-    // =========================
+    if (!email.trim()) {
+      nextErrors.email = "Saisis l’adresse e-mail associée à ton compte.";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      nextErrors.email = "Vérifie le format de ton adresse e-mail.";
+    }
+    if (!password) {
+      nextErrors.password = "Saisis ton mot de passe pour continuer.";
+    }
 
-    if (!email.trim() || !password) {
-      setError("Please fill in all fields.");
+    setFieldErrors(nextErrors);
+    if (Object.keys(nextErrors).length > 0) {
+      const firstInvalidField = Object.keys(nextErrors)[0];
+      document.getElementById(firstInvalidField)?.focus();
       return;
     }
 
@@ -68,31 +84,11 @@ const SignIn = () => {
       // =========================
 
       if (!result?.success) {
-        const errorMessage =
-          typeof result?.error === "string"
-            ? result.error
-            : "Unable to sign in.";
-
-        // =========================
-        // EMAIL NON VÉRIFIÉ
-        // =========================
-
-        if (
-          errorMessage.toLowerCase().includes("email not confirmed") ||
-          errorMessage.toLowerCase().includes("email not verified")
-        ) {
-          setError(
-            "Please verify your email before signing in."
-          );
-
-          return;
-        }
-
-        // =========================
-        // AUTRE ERREUR
-        // =========================
-
-        setError(errorMessage);
+        setError({
+          title: "Connexion impossible",
+          message:
+            "Vérifie ton adresse e-mail et ton mot de passe. Si tu viens de créer ton compte, confirme d’abord ton adresse e-mail.",
+        });
         return;
       }
 
@@ -108,9 +104,31 @@ const SignIn = () => {
         console.error('Sign in error:', error);
       }
 
-      setError(
-        "Something went wrong. Please try again."
-      );
+      setError({
+        title: "Un problème est survenu",
+        message: "Nous n’avons pas pu te connecter. Réessaie dans quelques instants.",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleOAuth = async () => {
+    setError(null);
+    setLoading(true);
+    try {
+      const result = await signInWithOAuth("google");
+      if (!result.success) {
+        setError({
+          title: "Connexion Google indisponible",
+          message: "Réessaie dans quelques instants ou connecte-toi avec ton adresse e-mail.",
+        });
+      }
+    } catch {
+      setError({
+        title: "Connexion Google indisponible",
+        message: "Réessaie dans quelques instants ou connecte-toi avec ton adresse e-mail.",
+      });
     } finally {
       setLoading(false);
     }
@@ -132,33 +150,33 @@ const SignIn = () => {
         <div className="mb-6 text-center sm:mb-7">
 
           <h1 className="text-2xl! font-semibold tracking-tight text-gray-900 sm:text-4xl! whitespace-nowrap">
-          Content de te revoir
+          Ravi de te revoir
           </h1>
 
           <p className="mx-auto mt-2 max-w-85 text-[12px]! leading-5 text-gray-500 sm:text-[13px]!">
-            Connectez-vous pour l'acces à votre tableau de bord.
+            Connecte-toi pour accéder à ton espace et retrouver ton activité.
           </p>
 
         </div>
 
         {/* ================= CARD ================= */}
 
-        <div className=" p-4  sm:p-6">
-
-          {/* ================= ERROR ================= */}
-
-          {error && (
-            <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2">
-              <p className="text-[11px]! font-medium text-red-600 sm:text-[12px]!">
-                {error}
-              </p>
-            </div>
-          )}
+        <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
 
           <form
             onSubmit={handleSubmit}
             className="space-y-4 sm:space-y-5"
+            noValidate
           >
+            {error && (
+              <AuthFeedback
+                variant="error"
+                title={error.title}
+                message={error.message}
+                onDismiss={() => setError(null)}
+              />
+            )}
+
 
             {/* EMAIL */}
 
@@ -180,6 +198,8 @@ const SignIn = () => {
                 placeholder="you@example.com"
                 autoComplete="email"
                 required
+                aria-invalid={Boolean(fieldErrors.email)}
+                aria-describedby={fieldErrors.email ? "email-error" : undefined}
                 className="
                   h-10!
                   w-full
@@ -197,8 +217,15 @@ const SignIn = () => {
                   focus:ring-blue-500/10
                   sm:h-11!
                   sm:text-[13px]!
+                  aria-[invalid=true]:border-red-400
+                  aria-[invalid=true]:focus:ring-red-500/10
                 "
               />
+              {fieldErrors.email && (
+                <p id="email-error" className="mt-1.5 text-xs font-medium text-red-700" role="alert">
+                  {fieldErrors.email}
+                </p>
+              )}
 
             </div>
 
@@ -246,6 +273,8 @@ const SignIn = () => {
                   placeholder="••••••••"
                   autoComplete="current-password"
                   required
+                  aria-invalid={Boolean(fieldErrors.password)}
+                  aria-describedby={fieldErrors.password ? "password-error" : undefined}
                   className="
                     h-10!
                     w-full
@@ -264,6 +293,8 @@ const SignIn = () => {
                     focus:ring-blue-500/10
                     sm:h-11!
                     sm:text-[13px]!
+                    aria-[invalid=true]:border-red-400
+                    aria-[invalid=true]:focus:ring-red-500/10
                   "
                 />
 
@@ -306,6 +337,11 @@ const SignIn = () => {
                 </button>
 
               </div>
+              {fieldErrors.password && (
+                <p id="password-error" className="mt-1.5 text-xs font-medium text-red-700" role="alert">
+                  {fieldErrors.password}
+                </p>
+              )}
 
             </div>
 
@@ -366,9 +402,7 @@ const SignIn = () => {
                 sm:text-[13px]!
               "
             >
-              {loading
-                ? "Connexion..."
-                : "Se connecter"}
+              {loading ? "Connexion..." : "Se connecter"}
             </button>
 
           </form>
@@ -385,6 +419,12 @@ const SignIn = () => {
 
             <div className="h-px flex-1 bg-gray-100" />
 
+          </div>
+
+          <div className="mb-5">
+            <button type="button" onClick={() => void handleGoogleOAuth()} disabled={loading} className="h-11 w-full rounded-lg border border-gray-200 bg-white px-3 text-sm font-semibold text-gray-800 transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:cursor-not-allowed disabled:opacity-60">
+              {loading ? "Connexion à Google…" : "Continuer avec Google"}
+            </button>
           </div>
 
           {/* ================= SIGN UP ================= */}

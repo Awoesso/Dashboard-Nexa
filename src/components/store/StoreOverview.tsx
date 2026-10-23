@@ -1,4 +1,4 @@
-import { Eye, Package, Store } from "lucide-react";
+import { Package, Store } from "lucide-react";
 import { CustomizeButton } from "@/components/store/CustomizeButton";
 import type { StoreRecord } from "@/types/store";
 
@@ -6,7 +6,6 @@ type StoreOverviewProps = {
   store: StoreRecord | null;
   productCount: number;
   publishedCount: number;
-  onPreview: () => void;
   onPublish: () => void;
 };
 
@@ -14,14 +13,13 @@ const StoreOverview = ({
   store,
   productCount,
   publishedCount,
-  onPreview,
   onPublish,
 }: StoreOverviewProps) => (
   <section id="store-section-overview" className="scroll-mt-5 space-y-4">
     <div className="grid gap-3 sm:grid-cols-3">
       <Metric icon={Store} label="Statut" value={store ? (store.status === "active" ? "Active" : "Inactive") : "À configurer"} detail={store?.status === "active" ? "La boutique est activée" : "Non visible comme boutique active"} />
       <Metric icon={Package} label="Produits" value={String(productCount)} detail={`${publishedCount} publié${publishedCount === 1 ? "" : "s"}`} />
-      <Metric icon={Eye} label="Adresse souhaitée" value={store?.slug ? `orion.store/${store.slug}` : "À définir"} detail="Le domaine public doit être configuré séparément" />
+      <Metric icon={Store} label="Adresse boutique" value={store?.slug ? store.slug : "À définir"} detail="Identifiant utilisé par l’atelier DSK" />
     </div>
 
     {!store && (
@@ -34,14 +32,11 @@ const StoreOverview = ({
       <div>
         <h2 className="font-heading! text-[14px]! font-semibold! text-gray-900!">Votre espace vendeur</h2>
         <p className="mt-1 max-w-xl text-[11px]! leading-5! text-gray-500!">
-          Ouvrez l’atelier pour choisir un modèle, un pays / indicatif et les couleurs, avec aperçu mobile, tablette et desktop.
+          Gérez votre vitrine et ses options de présentation dans l’atelier DSK connecté à votre boutique.
         </p>
       </div>
       <div className="flex shrink-0 flex-wrap gap-2">
         <CustomizeButton storeSlug={store?.slug} />
-        <button type="button" onClick={onPreview} className="inline-flex h-9 items-center gap-2 rounded-full! border! border-gray-200! px-3 text-[11px]! font-semibold! text-gray-900! hover:bg-gray-50!">
-          <Eye size={14} /> Aperçu
-        </button>
         <button type="button" onClick={onPublish} className="inline-flex h-9 items-center gap-2 rounded-full! bg-blue-600! px-3 text-[11px]! font-semibold! text-white! hover:bg-blue-700!">
           Gérer la publication
         </button>

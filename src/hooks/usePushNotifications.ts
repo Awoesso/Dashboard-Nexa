@@ -46,6 +46,31 @@ interface UsePushNotificationsReturn {
   disable: () => Promise<boolean>;
 }
 
+const getCurrentPushState = async () => {
+  const supported = isPushNotificationSupported();
+  if (!supported) {
+    return {
+      supported,
+      permission: "denied" as NotificationPermission,
+      subscription: null,
+    };
+  }
+
+  return {
+    supported,
+    permission: Notification.permission,
+    subscription: await getCurrentPushSubscription(),
+  };
+};
+
+const loadCurrentPushState = async () => {
+  const currentState = await getCurrentPushState();
+  if (currentState.subscription && currentState.permission === "granted") {
+    await syncCurrentPushSubscription();
+  }
+  return currentState;
+};
+
 export const usePushNotifications =
   (): UsePushNotificationsReturn => {
     const enableInFlightRef =
@@ -77,47 +102,12 @@ export const usePushNotifications =
 
     const refresh = useCallback(
       async (): Promise<void> => {
-        const isSupported =
-          isPushNotificationSupported();
-
-        setSupported(isSupported);
-
-        if (!isSupported) {
-          setPermission("denied");
-          setSubscription(null);
-          setLoading(false);
-
-          return;
-        }
-
         try {
+          const currentState = await loadCurrentPushState();
+          setSupported(currentState.supported);
+          setPermission(currentState.permission);
+          setSubscription(currentState.subscription);
           setError(null);
-
-          const currentPermission =
-            Notification.permission;
-
-          setPermission(
-            currentPermission
-          );
-
-          const currentSubscription =
-            await getCurrentPushSubscription();
-
-          setSubscription(
-            currentSubscription
-          );
-
-          /*
-           * Si une subscription existe déjà,
-           * on la resynchronise simplement avec
-           * Supabase.
-           */
-          if (
-            currentSubscription &&
-            currentPermission === "granted"
-          ) {
-            await syncCurrentPushSubscription();
-          }
         } catch (error: unknown) {
           console.error(
             "Erreur vérification Push :",
@@ -141,8 +131,32 @@ export const usePushNotifications =
     ========================================================= */
 
     useEffect(() => {
-      void refresh();
-    }, [refresh]);
+      let active = true;
+      void loadCurrentPushState()
+        .then((currentState) => {
+          if (!active) return;
+          setSupported(currentState.supported);
+          setPermission(currentState.permission);
+          setSubscription(currentState.subscription);
+          setError(null);
+        })
+        .catch((error: unknown) => {
+          if (!active) return;
+          console.error("Erreur vérification Push :", error);
+          setError(
+            error instanceof Error
+              ? error.message
+              : "Impossible de vérifier les notifications.",
+          );
+        })
+        .finally(() => {
+          if (active) setLoading(false);
+        });
+
+      return () => {
+        active = false;
+      };
+    }, []);
 
     /* =========================================================
        ENABLE

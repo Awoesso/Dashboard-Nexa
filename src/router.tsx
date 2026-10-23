@@ -1,14 +1,12 @@
 import {
   createBrowserRouter,
   Navigate,
-  useParams,
 } from "react-router-dom";
 import { Suspense } from "react";
 import DashboardLayout from "./layouts/DashboardLayout";
 import { ProtectedRoute, PublicRoute } from "./components/ProtectedRoute";
 import {
-  Dashboard,
-  DskStoreEditorView,
+  ForgotPassword,
   Leaderboard,
   Marketplace,
   MarketplaceProductDetails,
@@ -17,24 +15,14 @@ import {
   ProductsNew,
   PublicHome,
   RouteLoading,
+  ResetPassword,
   Settings,
   SignIn,
   SignUp,
 } from "./routePages";
 import NotFound from "./Pages/NotFound";
 import ErrorFallback from "./Pages/ErrorFallback";
-
-const EditorRouteWrapper = () => {
-  const { slug } = useParams<{ slug: string }>();
-  if (!slug) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-100 text-xs text-slate-600">
-        Identifiant de boutique manquant
-      </div>
-    );
-  }
-  return <DskStoreEditorView slug={slug} />;
-};
+import EditorRouteWrapper from "./components/routing/EditorRouteWrapper";
 
 export const router = createBrowserRouter([
   {
@@ -74,6 +62,28 @@ export const router = createBrowserRouter([
   },
 
   {
+    path: "/forgot-password",
+    errorElement: <ErrorFallback />,
+    element: (
+      <PublicRoute>
+        <Suspense fallback={<RouteLoading />}>
+          <ForgotPassword />
+        </Suspense>
+      </PublicRoute>
+    ),
+  },
+
+  {
+    path: "/reset-password",
+    errorElement: <ErrorFallback />,
+    element: (
+      <Suspense fallback={<RouteLoading />}>
+        <ResetPassword />
+      </Suspense>
+    ),
+  },
+
+  {
     path: "/dashboard",
     errorElement: <ErrorFallback />,
     element: (
@@ -90,11 +100,10 @@ export const router = createBrowserRouter([
       {
         path: "home",
         errorElement: <ErrorFallback />,
-        element: (
-          <Suspense fallback={<RouteLoading />}>
-            <Dashboard />
-          </Suspense>
-        ),
+        lazy: async () => {
+          const { default: DashboardPage } = await import("./Pages/dashboard/Dashboard");
+          return { Component: DashboardPage };
+        },
       },
 {
   path: "products/new",

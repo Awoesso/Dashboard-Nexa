@@ -21,7 +21,7 @@ const StorePublishPanel = ({ store, name, slug, publishedCount, saving, error, m
   const active = store?.status === "active";
 
   return (
-    <section id="store-section-publication" className="scroll-mt-5 rounded-2xl! border! border-gray-200! bg-white! p-4 sm:p-5!">
+    <section id="store-section-publication" className="scroll-mt-5 p-4 sm:p-5!">
       <div className="flex items-start gap-3">
         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-700"><Globe2 size={17} /></div>
         <div><h2 className="font-heading! text-[14px]! font-semibold! text-gray-900!">Publication</h2><p className="mt-1 text-[11px]! leading-5! text-gray-500!">Le statut active/inactive est enregistré dans `stores`. La route publique et le domaine de vitrine ne sont pas configurés dans l’application actuelle.</p></div>

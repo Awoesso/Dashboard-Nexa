@@ -1,22 +1,14 @@
 import { useState } from "react";
-import StoreBrandingForm from "@/components/store/StoreBrandingForm";
-import StoreDesignEditor from "@/components/store/StoreDesignEditor";
 import StoreHeader from "@/components/store/StoreHeader";
 import StoreInformationForm from "@/components/store/StoreInformationForm";
 import StoreOverview from "@/components/store/StoreOverview";
-import StorePreview from "@/components/store/StorePreview";
 import StorePublishPanel from "@/components/store/StorePublishPanel";
 import StoreSidebar, { type StoreSection } from "@/components/store/StoreSidebar";
-import TemplateGallery from "@/components/store/TemplateGallery";
 import { useStore } from "@/hooks/useStore";
 
 const SECTION_IDS: Record<StoreSection, string> = {
   overview: "store-section-overview",
   information: "store-section-information",
-  branding: "store-section-branding",
-  templates: "store-section-templates",
-  design: "store-section-design",
-  preview: "store-section-preview",
   publication: "store-section-publication",
 };
 
@@ -42,7 +34,6 @@ const MyStore = () => {
           status={storeState.store?.status ?? null}
           saving={storeState.saving}
           onSave={() => void storeState.save()}
-          onPreview={() => selectSection("preview")}
           onPublish={() => selectSection("publication")}
         />
 
@@ -62,7 +53,6 @@ const MyStore = () => {
               store={storeState.store}
               productCount={storeState.productCount}
               publishedCount={storeState.publishedProducts.length}
-              onPreview={() => selectSection("preview")}
               onPublish={() => selectSection("publication")}
             />
             <StoreInformationForm
@@ -72,15 +62,6 @@ const MyStore = () => {
               message={storeState.message}
               onChange={storeState.updateForm}
               onSave={() => void storeState.save()}
-            />
-            <StoreBrandingForm />
-            <TemplateGallery selected={storeState.template} onSelect={storeState.setTemplate} />
-            <StoreDesignEditor design={storeState.design} onChange={storeState.setDesign} />
-            <StorePreview
-              store={storeState.store}
-              products={storeState.publishedProducts}
-              template={storeState.template}
-              design={storeState.design}
             />
             <StorePublishPanel
               store={storeState.store}

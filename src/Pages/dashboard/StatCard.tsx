@@ -1,7 +1,7 @@
 type StatCardProps = {
   title: string;
   value: number;
-  change: number;
+  change: number | null;
   currency?: string;
   period?: string;
 };
@@ -13,7 +13,8 @@ const StatCard = ({
   currency,
   period,
 }: StatCardProps) => {
-  const isPositive = change >= 0;
+  const isComparable = change !== null;
+  const isPositive = isComparable && change >= 0;
   const formattedValue = value.toLocaleString();
 
   return (
@@ -71,22 +72,16 @@ const StatCard = ({
         {/* Change */}
 
         <span
-          className={`
-            mb-0.5
-            shrink-0
-            rounded-full
-            px-1.5 py-0.5
-            text-[10px]!
-            font-medium
-            ${
-              isPositive
+          title={isComparable ? "Évolution par rapport à la période précédente" : "Comparaison indisponible"}
+          className={`mb-0.5 shrink-0 rounded-full px-1.5 py-0.5 text-[10px]! font-medium ${
+            !isComparable
+              ? "bg-gray-100 text-gray-500"
+              : isPositive
                 ? "bg-green-100 text-green-700"
                 : "bg-red-100 text-red-700"
-            }
-          `}
+          }`}
         >
-          {isPositive ? "+" : ""}
-          {change}%
+          {isComparable ? `${isPositive ? "+" : ""}${change.toFixed(1)}%` : "N/A"}
         </span>
 
       </div>

@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 
 import { UserAuth } from "@/Context/Authcontext";
+import AccountSecurityActions from "./AccountSecurityActions";
 
 const SecuritySettings = () => {
   const { session, signOut } = UserAuth();
@@ -119,6 +120,8 @@ const SecuritySettings = () => {
               Active
             </div>
           </div>
+
+            <AccountSecurityActions />
 
           {/* =================================================
               CURRENT SESSION
@@ -235,32 +238,6 @@ const SecuritySettings = () => {
             </button>
           </div>
 
-          {/* =================================================
-              DANGER ZONE
-          ================================================= */}
-
-          <div className="py-5!">
-            <div className="flex! min-w-0! items-start! gap-3!">
-              <AlertTriangle
-                size={15}
-                strokeWidth={1.9}
-                className="mt-0.5! shrink-0! text-red-500!"
-              />
-
-              <div className="min-w-0!">
-                <p className="text-[11px]! font-semibold! text-gray-900! sm:text-xs!">
-                  Danger zone
-                </p>
-
-                <p className="mt-0.5! max-w-2xl! text-[9px]! leading-4! text-gray-500! sm:text-[10px]!">
-                  Permanent account deletion can be
-                  added here later with proper
-                  server-side protection and
-                  confirmation.
-                </p>
-              </div>
-            </div>
-          </div>
         </div>
       </section>
 

@@ -3,9 +3,10 @@ import type { DashboardStats } from "@/services/dashboard.service";
 
 type GlobalStatCardProps = {
   stats: DashboardStats | null;
+  period?: string;
 };
 
-const GlobalStatCard = ({ stats }: GlobalStatCardProps) => {
+const GlobalStatCard = ({ stats, period }: GlobalStatCardProps) => {
   if (!stats) {
     return null;
   }
@@ -15,32 +16,32 @@ const GlobalStatCard = ({ stats }: GlobalStatCardProps) => {
       id: "earnings",
       label: "Total Earnings",
       value: stats.totalEarnings,
-      change: stats.earningsChange ?? 0,
+      change: stats.earningsChange,
       currency: stats.currency,
-      period: "",
+      period,
     },
     {
       id: "orders",
       label: "Total Orders",
       value: stats.totalOrders,
-      change: stats.ordersChange ?? 0,
+      change: stats.ordersChange,
       currency: "",
-      period: "",
+      period,
     },
     {
       id: "products",
       label: "Products",
       value: stats.products,
-      change: stats.productsChange ?? 0,
+      change: stats.productsChange,
       currency: "",
-      period: "",
+      period,
     },
     {
       id: "sales",
       label: "Total Sales",
       value: stats.totalSales,
-      change: stats.salesChange ?? 0,
-      period: "",
+      change: stats.salesChange,
+      period,
     },
   ];
 

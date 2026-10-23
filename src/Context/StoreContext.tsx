@@ -152,6 +152,8 @@ export const StoreProvider = ({ payload, children }: StoreProviderProps) => {
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;
 };
 
+// The hook shares this module with its provider so they stay paired.
+// eslint-disable-next-line react-refresh/only-export-components
 export const useEditorStore = () => {
   const context = useContext(StoreContext);
   if (!context) throw new Error("useEditorStore must be used within StoreProvider");

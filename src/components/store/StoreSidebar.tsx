@@ -1,8 +1,4 @@
 import {
-  Eye,
-  Image,
-  LayoutTemplate,
-  Palette,
   Rocket,
   Settings2,
   Store,
@@ -11,19 +7,11 @@ import {
 export type StoreSection =
   | "overview"
   | "information"
-  | "branding"
-  | "templates"
-  | "design"
-  | "preview"
   | "publication";
 
 const sections: { id: StoreSection; label: string; icon: typeof Store }[] = [
   { id: "overview", label: "Vue d’ensemble", icon: Store },
   { id: "information", label: "Informations", icon: Settings2 },
-  { id: "branding", label: "Identité visuelle", icon: Image },
-  { id: "templates", label: "Modèles", icon: LayoutTemplate },
-  { id: "design", label: "Design", icon: Palette },
-  { id: "preview", label: "Aperçu", icon: Eye },
   { id: "publication", label: "Publication", icon: Rocket },
 ];
 

@@ -28,7 +28,6 @@ const DashboardLayout = () => {
       <div className="flex min-h-screen! w-full! items-center justify-center bg-gray-100! px-4!">
         <div className="text-center">
           <div className="inline-block! h-8! w-8! animate-spin! rounded-full! border-4! border-gray-300! border-t-blue-600!" />
-
           <p className="mt-4! text-sm! text-gray-600">
             Loading dashboard...
           </p>

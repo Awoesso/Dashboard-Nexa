@@ -1,3 +1,4 @@
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Bar,
   BarChart,
@@ -7,6 +8,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { getDashboardAnalytics } from "@/services/dashboard.service";
 
 import type {
   DashboardAnalytics,
@@ -16,12 +18,13 @@ import type {
 
 interface DashChartProps {
   analytics: DashboardAnalytics | null;
-  period: DashboardPeriod;
   periodOptions: DashboardPeriodOption[];
+  refreshKey: number;
 }
 
 type TooltipProps = {
   active?: boolean;
+  currency: string;
   payload?: {
     payload: {
       label: string;
@@ -34,6 +37,7 @@ type TooltipProps = {
 const CustomTooltip = ({
   active,
   payload,
+  currency,
 }: TooltipProps) => {
   if (!active || !payload?.length) {
     return null;
@@ -70,7 +74,7 @@ const CustomTooltip = ({
           </span>
 
           <span className="font-mono text-[9px]! font-medium text-gray-900">
-            {data.earnings.toLocaleString("fr-FR")} XOF
+            {data.earnings.toLocaleString("fr-FR")} {currency}
           </span>
         </div>
 
@@ -93,18 +97,69 @@ const CustomTooltip = ({
 
 const DashChart = ({
   analytics,
-  period,
   periodOptions,
+  refreshKey,
 }: DashChartProps) => {
-  const chartData = analytics?.points ?? [];
+  const initialPeriod = analytics?.period ?? "30d";
+  const [selectedPeriod, setSelectedPeriod] =
+    useState<DashboardPeriod>(initialPeriod);
+  const [chartState, setChartState] = useState<{
+    period: DashboardPeriod;
+    data: DashboardAnalytics | null;
+    error: string | null;
+  }>({ period: initialPeriod, data: analytics, error: null });
+  const [retryVersion, setRetryVersion] = useState(0);
+  const requestIdRef = useRef(0);
+  const lastLoadedRef = useRef({
+    period: analytics?.period ?? null,
+    refreshKey: 0,
+  });
 
-  const currentPeriod =
-    periodOptions?.find(
-      (item) => item.key === period
+  const period = useMemo(() => {
+    if (periodOptions.some((option) => option.key === selectedPeriod)) {
+      return selectedPeriod;
+    }
+
+    return (
+      [...periodOptions].reverse().find((option) => option.days !== null)?.key ??
+      "all"
     );
+  }, [periodOptions, selectedPeriod]);
+  const chartLoading = chartState.period !== period && chartState.error === null;
+  const chartData = chartState.data?.points ?? [];
 
-  const periodLabel =
-    currentPeriod?.label ?? "Depuis le début";
+  useEffect(() => {
+    if (
+      lastLoadedRef.current.period === period &&
+      lastLoadedRef.current.refreshKey === refreshKey
+    ) {
+      return;
+    }
+
+    const requestId = ++requestIdRef.current;
+    void getDashboardAnalytics(period)
+      .then((result) => {
+        if (requestId !== requestIdRef.current) return;
+        lastLoadedRef.current = { period, refreshKey };
+        setChartState({ period, data: result, error: null });
+      })
+      .catch((loadError: unknown) => {
+        if (requestId !== requestIdRef.current) return;
+        setChartState((current) => ({
+          ...current,
+          error:
+            loadError instanceof Error
+              ? loadError.message
+              : "Impossible de charger le graphique.",
+        }));
+      });
+
+    return () => {
+      requestIdRef.current += 1;
+    };
+  }, [period, refreshKey, retryVersion]);
+
+  const chartCurrency = chartState.data?.currency ?? analytics?.currency ?? "XOF";
 
   return (
     <section
@@ -159,28 +214,28 @@ const DashChart = ({
 
         {/* Period */}
 
-        <button
-          type="button"
+        <label
           className="
-            flex
-            w-fit
-            shrink-0
-            items-center
-            gap-2
-            rounded-full
-            border border-gray-200
-            bg-white
-            px-3 py-1.5
-            text-xs!
-            font-medium
-            text-gray-700
-            transition-colors
-            hover:bg-gray-50
-            focus:outline-none
+            w-fit shrink-0
           "
         >
-          {periodLabel}
-        </button>
+          <span className="sr-only">Période du graphique</span>
+          <select
+            aria-label="Période du graphique"
+            value={period}
+            onChange={(event) => {
+              setChartState((current) => ({ ...current, error: null }));
+              setSelectedPeriod(event.target.value as DashboardPeriod);
+            }}
+            className="w-full rounded-full border border-gray-200 bg-white px-3 py-1.5 text-xs! font-medium text-gray-700 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+          >
+            {periodOptions.map((option) => (
+              <option key={option.key} value={option.key}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </label>
 
       </div>
 
@@ -213,7 +268,20 @@ const DashChart = ({
         "
       >
 
-        {chartData.length === 0 ? (
+        {chartState.error ? (
+          <div className="flex h-full flex-col items-center justify-center gap-2">
+            <p role="alert" className="text-center text-[11px]! font-medium text-red-600">
+              {chartState.error}
+            </p>
+            <button
+              type="button"
+              onClick={() => setRetryVersion((version) => version + 1)}
+              className="rounded-full border border-gray-200 px-3 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50"
+            >
+              Réessayer
+            </button>
+          </div>
+        ) : chartData.length === 0 && !chartLoading ? (
           <div className="flex h-full items-center justify-center">
             <p className="text-[11px]! font-medium text-gray-400">
               Aucune donnée disponible
@@ -311,7 +379,7 @@ const DashChart = ({
                 cursor={{
                   fill: "rgba(37, 99, 235, 0.04)",
                 }}
-                content={<CustomTooltip />}
+                content={<CustomTooltip currency={chartCurrency} />}
               />
 
               {/* ================= BAR ================= */}
@@ -330,6 +398,11 @@ const DashChart = ({
 
             </BarChart>
           </ResponsiveContainer>
+        )}
+        {chartLoading && (
+          <p role="status" className="mt-1 text-center text-[10px] text-gray-500">
+            Mise à jour du graphique…
+          </p>
         )}
 
       </div>

@@ -1,18 +1,36 @@
 import { useState } from "react";
 import { Eye, EyeOff, MailCheck } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { UserAuth } from "@/Context/Authcontext";
+import { isStrongPassword, passwordPolicyMessage } from "@/lib/passwordPolicy";
+import AuthFeedback from "./AuthFeedback";
+
+type SignUpField =
+  | "firstName"
+  | "lastName"
+  | "email"
+  | "password"
+  | "confirmPassword";
 
 const SignUp = () => {
-  const { signUpNewUser } = UserAuth();
+  const {
+    signUpNewUser,
+    verifySignupOtp,
+    resendSignupOtp,
+    signInWithOAuth,
+  } = UserAuth();
+  const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const [error, setError] = useState("");
+  const [error, setError] = useState<{ title: string; message: string } | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Partial<Record<SignUpField, string>>>({});
+  const [notice, setNotice] = useState("");
   const [loading, setLoading] = useState(false);
   const [signupSuccess, setSignupSuccess] = useState(false);
   const [verificationEmail, setVerificationEmail] = useState("");
+  const [otp, setOtp] = useState("");
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -27,6 +45,21 @@ const SignUp = () => {
   ) => {
     const { name, value } = e.target;
 
+    if (
+      name === "firstName" ||
+      name === "lastName" ||
+      name === "email" ||
+      name === "password" ||
+      name === "confirmPassword"
+    ) {
+      setFieldErrors((current) => ({
+        ...current,
+        [name]: undefined,
+        ...(name === "password" ? { confirmPassword: undefined } : {}),
+      }));
+    }
+    setError(null);
+    setNotice("");
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -38,7 +71,8 @@ const SignUp = () => {
   ) => {
     event.preventDefault();
 
-    setError("");
+    setError(null);
+    const nextErrors: Partial<Record<SignUpField, string>> = {};
 
     const {
       firstName,
@@ -52,26 +86,29 @@ const SignUp = () => {
     // VÉRIFICATION DES CHAMPS
     // =========================
 
-    if (
-      !firstName.trim() ||
-      !lastName.trim() ||
-      !email.trim() ||
-      !password ||
-      !confirmPassword
-    ) {
-      setError("Please fill in all fields.");
+    if (!firstName.trim()) nextErrors.firstName = "Renseigne ton prénom.";
+    if (!lastName.trim()) nextErrors.lastName = "Renseigne ton nom.";
+    if (!email.trim()) {
+      nextErrors.email = "Saisis une adresse e-mail pour recevoir ton code de confirmation.";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      nextErrors.email = "Vérifie le format de ton adresse e-mail.";
+    }
+    if (!password) {
+      nextErrors.password = "Choisis un mot de passe pour sécuriser ton compte.";
+    } else if (!isStrongPassword(password)) {
+      nextErrors.password = passwordPolicyMessage;
+    }
+    if (!confirmPassword) {
+      nextErrors.confirmPassword = "Saisis à nouveau ton mot de passe.";
+    } else if (password !== confirmPassword) {
+      nextErrors.confirmPassword = "Les deux mots de passe ne correspondent pas.";
+    }
+    setFieldErrors(nextErrors);
+    if (Object.keys(nextErrors).length > 0) {
+      const firstInvalidField = Object.keys(nextErrors)[0];
+      document.getElementById(firstInvalidField)?.focus();
       return;
     }
-
-    // =========================
-    // VÉRIFICATION PASSWORD
-    // =========================
-
-    if (password !== confirmPassword) {
-      setError("Passwords do not match.");
-      return;
-    }
-
     // =========================
     // LOADING
     // =========================
@@ -95,12 +132,17 @@ const SignUp = () => {
       // =========================
 
       if (!result?.success) {
-        const errorMessage =
-          typeof result?.error === "string"
-            ? result.error
-            : "Unable to create your account.";
+        setError({
+          title: "Création du compte impossible",
+          message:
+            "Vérifie les informations saisies et réessaie. Si le problème persiste, patiente quelques instants avant une nouvelle tentative.",
+        });
+        return;
+      }
 
-        setError(errorMessage);
+      const responseData = result.data as { session?: unknown } | undefined;
+      if (responseData?.session) {
+        navigate("/dashboard");
         return;
       }
 
@@ -119,9 +161,81 @@ const SignUp = () => {
         confirmPassword: "",
       });
     } catch {
-      setError(
-        "Something went wrong. Please try again."
-      );
+      setError({
+        title: "Un problème est survenu",
+        message: "Ton compte n’a pas pu être créé. Réessaie dans quelques instants.",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVerifyOtp = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setError(null);
+    setNotice("");
+    setLoading(true);
+
+    try {
+      const result = await verifySignupOtp(verificationEmail, otp);
+      if (result.success) {
+        navigate("/dashboard");
+      } else {
+        setError({
+          title: "Code non validé",
+          message: "Vérifie les 6 chiffres saisis. Le code peut avoir expiré ; tu peux en demander un nouveau.",
+        });
+      }
+    } catch {
+      setError({
+        title: "Vérification indisponible",
+        message: "Nous n’avons pas pu vérifier le code. Réessaie dans quelques instants.",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResendOtp = async () => {
+    setError(null);
+    setNotice("");
+    setLoading(true);
+    try {
+      const result = await resendSignupOtp(verificationEmail);
+      if (!result.success) {
+        setError({
+          title: "Envoi du code impossible",
+          message: "Un code récent a peut-être déjà été envoyé. Attends un instant puis réessaie.",
+        });
+      } else {
+        setNotice("Un nouveau code vient d’être envoyé. Pense aussi à vérifier tes courriers indésirables.");
+      }
+    } catch {
+      setError({
+        title: "Envoi du code impossible",
+        message: "Nous n’avons pas pu envoyer le code. Réessaie dans quelques instants.",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleOAuth = async () => {
+    setError(null);
+    setLoading(true);
+    try {
+      const result = await signInWithOAuth("google");
+      if (!result.success) {
+        setError({
+          title: "Inscription Google indisponible",
+          message: "Réessaie dans quelques instants ou crée ton compte avec ton adresse e-mail.",
+        });
+      }
+    } catch {
+      setError({
+        title: "Inscription Google indisponible",
+        message: "Réessaie dans quelques instants ou crée ton compte avec ton adresse e-mail.",
+      });
     } finally {
       setLoading(false);
     }
@@ -146,12 +260,11 @@ const SignUp = () => {
 
           <div className="mb-6 text-center sm:mb-7">
             <h1 className="text-[22px]! font-semibold tracking-tight text-gray-900 sm:text-[24px]!">
-              Vérifiez votre email
+              Vérifie ton adresse e-mail
             </h1>
 
             <p className="mx-auto mt-2 max-w-85 text-[12px]! leading-5 text-gray-500 sm:text-[13px]!">
-              Nous avons envoyé un lien de vérification
-              à votre adresse email.
+              Saisis le code à 6 chiffres envoyé à ton adresse e-mail.
             </p>
           </div>
 
@@ -169,6 +282,7 @@ const SignUp = () => {
                   className="text-blue-600"
                 />
               </div>
+              {fieldErrors.confirmPassword && <p id="confirmPassword-error" role="alert" className="mt-1.5 text-xs font-medium text-red-700">{fieldErrors.confirmPassword}</p>}
             </div>
 
             {/* ================= MESSAGE ================= */}
@@ -176,11 +290,11 @@ const SignUp = () => {
             <div className="mt-5 text-center">
 
               <h2 className="text-[15px]! font-semibold text-gray-900">
-                Confirmez votre adresse
+                Confirme ton adresse
               </h2>
 
               <p className="mx-auto mt-2 max-w-82.5 text-[11px]! leading-5 text-gray-500 sm:text-[12px]!">
-                Cliquez sur le lien envoyé à
+                Code envoyé à
               </p>
 
               <p className="mt-1 break-all text-[11px]! font-semibold text-gray-900 sm:text-[12px]!">
@@ -188,8 +302,7 @@ const SignUp = () => {
               </p>
 
               <p className="mx-auto mt-3 max-w-82.5 text-[10px]! leading-5 text-gray-400 sm:text-[11px]!">
-                Après avoir vérifié votre adresse email,
-                vous pourrez vous connecter à votre compte.
+                Saisis le code reçu pour confirmer ton adresse et accéder à ton compte.
               </p>
 
             </div>
@@ -200,16 +313,54 @@ const SignUp = () => {
 
             {/* ================= SIGN IN ================= */}
 
-            <p className="text-center text-[10px]! text-gray-500 sm:text-[11px]!">
-              Vous avez déjà vérifié votre email ?{" "}
-
-              <Link
-                to="/signin"
-                className="font-medium text-blue-600! underline hover:text-blue-700!"
-              >
-                Se connecter
-              </Link>
-            </p>
+            {error && (
+              <AuthFeedback
+                variant="error"
+                title={error.title}
+                message={error.message}
+                onDismiss={() => setError(null)}
+              />
+            )}
+            {notice && (
+              <AuthFeedback
+                variant="success"
+                title="Code envoyé"
+                message={notice}
+              />
+            )}
+            <form onSubmit={handleVerifyOtp} className="space-y-3">
+              <label htmlFor="signup-otp" className="block text-sm font-medium text-gray-800">
+                Code de vérification
+              </label>
+              <input
+                id="signup-otp"
+                type="text"
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                pattern="[0-9]{6}"
+                maxLength={6}
+                required
+                value={otp}
+                onChange={(event) => {
+                  setOtp(event.target.value.replace(/\D/g, "").slice(0, 6));
+                  setError(null);
+                }}
+                placeholder="123456"
+                aria-label="Code de vérification à six chiffres"
+                className="h-12 w-full rounded-lg border border-gray-200 bg-white px-3 text-center text-xl font-semibold tracking-[0.45em] text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10"
+              />
+              {otp.length > 0 && otp.length < 6 && (
+                <p className="text-xs text-gray-500" role="status">
+                  Encore {6 - otp.length} chiffre{6 - otp.length > 1 ? "s" : ""} à saisir.
+                </p>
+              )}
+              <button type="submit" disabled={loading || otp.length !== 6} className="h-11 w-full rounded-lg bg-blue-900 px-4 text-sm font-semibold text-white transition hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500/30 disabled:cursor-not-allowed disabled:opacity-60">
+                {loading ? "Vérification..." : "Vérifier le code"}
+              </button>
+            </form>
+            <button type="button" onClick={handleResendOtp} disabled={loading} className="mt-4 w-full text-sm font-medium text-blue-700 underline underline-offset-4 disabled:cursor-not-allowed disabled:opacity-50">
+              {loading ? "Veuillez patienter…" : "Je n’ai pas reçu le code — le renvoyer"}
+            </button>
 
           </div>
 
@@ -253,21 +404,27 @@ const SignUp = () => {
 
         {/* ================= CARD ================= */}
 
-        <div className=" p-4  sm:p-6">
-
-          {/* ================= ERROR ================= */}
+        <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
 
           {error && (
-            <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2">
-              <p className="text-[11px]! font-medium text-red-600 sm:text-[12px]!">
-                {error}
-              </p>
-            </div>
+            <AuthFeedback
+              variant="error"
+              title={error.title}
+              message={error.message}
+              onDismiss={() => setError(null)}
+            />
           )}
+
+          <div className="mb-5">
+            <button type="button" onClick={() => void handleGoogleOAuth()} disabled={loading} className="h-11 w-full rounded-lg border border-gray-200 bg-white px-3 text-sm font-semibold text-gray-800 transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:cursor-not-allowed disabled:opacity-60">
+              {loading ? "Connexion à Google…" : "Continuer avec Google"}
+            </button>
+          </div>
 
           <form
             onSubmit={handleSubmit}
             className="space-y-4 sm:space-y-5"
+            noValidate
           >
 
             {/* ================= NAME ================= */}
@@ -293,6 +450,8 @@ const SignUp = () => {
                   placeholder="John"
                   autoComplete="given-name"
                   required
+                  aria-invalid={Boolean(fieldErrors.firstName)}
+                  aria-describedby={fieldErrors.firstName ? "firstName-error" : undefined}
                   className="
                     h-10!
                     w-full
@@ -310,8 +469,11 @@ const SignUp = () => {
                     focus:ring-blue-500/10
                     sm:h-11!
                     sm:text-[13px]!
+                    aria-[invalid=true]:border-red-400
+                    aria-[invalid=true]:focus:ring-red-500/10
                   "
                 />
+                {fieldErrors.firstName && <p id="firstName-error" role="alert" className="mt-1.5 text-xs font-medium text-red-700">{fieldErrors.firstName}</p>}
               </div>
 
               {/* LAST NAME */}
@@ -333,6 +495,8 @@ const SignUp = () => {
                   placeholder="Aneme"
                   autoComplete="family-name"
                   required
+                  aria-invalid={Boolean(fieldErrors.lastName)}
+                  aria-describedby={fieldErrors.lastName ? "lastName-error" : undefined}
                   className="
                     h-10!
                     w-full
@@ -350,8 +514,11 @@ const SignUp = () => {
                     focus:ring-blue-500/10
                     sm:h-11!
                     sm:text-[13px]!
+                    aria-[invalid=true]:border-red-400
+                    aria-[invalid=true]:focus:ring-red-500/10
                   "
                 />
+                {fieldErrors.lastName && <p id="lastName-error" role="alert" className="mt-1.5 text-xs font-medium text-red-700">{fieldErrors.lastName}</p>}
               </div>
 
             </div>
@@ -372,9 +539,11 @@ const SignUp = () => {
                 type="email"
                 value={formData.email}
                 onChange={handleChange}
-                placeholder="you@example.com"
+                placeholder="vous@exemple.com"
                 autoComplete="email"
                 required
+                aria-invalid={Boolean(fieldErrors.email)}
+                aria-describedby={fieldErrors.email ? "signup-email-error" : undefined}
                 className="
                   h-10!
                   w-full
@@ -392,8 +561,11 @@ const SignUp = () => {
                   focus:ring-blue-500/10
                   sm:h-11!
                   sm:text-[13px]!
+                  aria-[invalid=true]:border-red-400
+                  aria-[invalid=true]:focus:ring-red-500/10
                 "
               />
+              {fieldErrors.email && <p id="signup-email-error" role="alert" className="mt-1.5 text-xs font-medium text-red-700">{fieldErrors.email}</p>}
             </div>
 
             {/* ================= PASSWORD ================= */}
@@ -421,7 +593,9 @@ const SignUp = () => {
                   placeholder="••••••••"
                   autoComplete="new-password"
                   required
-                  minLength={6}
+                  minLength={8}
+                  aria-invalid={Boolean(fieldErrors.password)}
+                  aria-describedby={fieldErrors.password ? "password-policy signup-password-error" : "password-policy"}
                   className="
                     h-10!
                     w-full
@@ -440,6 +614,8 @@ const SignUp = () => {
                     focus:ring-blue-500/10
                     sm:h-11!
                     sm:text-[13px]!
+                    aria-[invalid=true]:border-red-400
+                    aria-[invalid=true]:focus:ring-red-500/10
                   "
                 />
 
@@ -471,9 +647,10 @@ const SignUp = () => {
 
               </div>
 
-              <p className="mt-1.5 text-[9px]! text-gray-400 sm:text-[10px]!">
-                Minimum 6 caractères.
+              <p id="password-policy" className="mt-1.5 text-[10px]! leading-4 text-gray-500 sm:text-[11px]!">
+                8 caractères minimum, avec une majuscule et un chiffre.
               </p>
+              {fieldErrors.password && <p id="signup-password-error" role="alert" className="mt-1.5 text-xs font-medium text-red-700">{fieldErrors.password}</p>}
             </div>
 
             {/* ================= CONFIRM PASSWORD ================= */}
@@ -501,6 +678,8 @@ const SignUp = () => {
                   placeholder="••••••••"
                   autoComplete="new-password"
                   required
+                  aria-invalid={Boolean(fieldErrors.confirmPassword)}
+                  aria-describedby={fieldErrors.confirmPassword ? "confirmPassword-error" : undefined}
                   className="
                     h-10!
                     w-full
@@ -519,9 +698,10 @@ const SignUp = () => {
                     focus:ring-blue-500/10
                     sm:h-11!
                     sm:text-[13px]!
+                    aria-[invalid=true]:border-red-400
+                    aria-[invalid=true]:focus:ring-red-500/10
                   "
                 />
-
                 <button
                   type="button"
                   onClick={() =>

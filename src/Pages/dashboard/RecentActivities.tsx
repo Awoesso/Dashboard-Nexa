@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Wallet,
   Download,
@@ -85,10 +86,47 @@ type RecentActivitiesProps = {
   activities?: DashboardActivity[];
 };
 
+type ActivityFilter = "today" | "yesterday" | "week";
+
+const getActivityFilterStart = (filter: ActivityFilter): Date => {
+  const start = new Date();
+  start.setHours(0, 0, 0, 0);
+
+  if (filter === "yesterday") {
+    start.setDate(start.getDate() - 1);
+  } else if (filter === "week") {
+    const daysSinceMonday = (start.getDay() + 6) % 7;
+    start.setDate(start.getDate() - daysSinceMonday);
+  }
+
+  return start;
+};
+
+const getActivityFilterEnd = (filter: ActivityFilter): Date => {
+  const end = getActivityFilterStart(filter);
+  end.setDate(end.getDate() + (filter === "week" ? 7 : 1));
+  return end;
+};
+
 const RecentActivities = ({
   activities = [],
 }: RecentActivitiesProps) => {
-  const recentActivities = activities.slice(0, 4);
+  const [filter, setFilter] = useState<ActivityFilter>("today");
+  const [showAll, setShowAll] = useState(false);
+  const start = getActivityFilterStart(filter);
+  const end = getActivityFilterEnd(filter);
+  const filteredActivities = activities.filter((activity) => {
+    const timestamp = new Date(activity.createdAt).getTime();
+    return Number.isFinite(timestamp) && timestamp >= start.getTime() && timestamp < end.getTime();
+  });
+  const visibleActivities = showAll
+    ? filteredActivities
+    : filteredActivities.slice(0, 4);
+  const filters: { id: ActivityFilter; label: string }[] = [
+    { id: "today", label: "Today" },
+    { id: "yesterday", label: "Yesterday" },
+    { id: "week", label: "This Week" },
+  ];
 
   return (
     <section className="w-full min-w-0 rounded-2xl border border-gray-200 bg-white p-3.5 sm:p-4">
@@ -103,19 +141,11 @@ const RecentActivities = ({
 
         <button
           type="button"
-          className="
-            shrink-0
-            rounded-full
-            border border-gray-200
-            px-2.5 py-1
-            !text-xs
-            font-medium
-            text-gray-700
-            transition-colors
-            hover:bg-gray-50
-          "
+          aria-expanded={showAll}
+          onClick={() => setShowAll((current) => !current)}
+          className="shrink-0 rounded-full border border-gray-200 px-2.5 py-1 !text-xs font-medium text-gray-700 transition-colors hover:bg-gray-50"
         >
-          See All
+          {showAll ? "Show Less" : "See All"}
         </button>
 
       </div>
@@ -124,62 +154,24 @@ const RecentActivities = ({
 
       <div className="mt-3 flex w-full gap-1 rounded-full border border-gray-200 bg-gray-50 p-1 sm:gap-1.5">
 
-        <button
-          type="button"
-          className="
-            min-w-0
-            flex-1
-            rounded-full
-            border border-gray-200
-            bg-white
-            px-1.5 py-2
-            !text-[11px]
-            font-semibold
-            text-gray-800
-            shadow-sm
-            sm:!text-[11.5px]
-          "
-        >
-          Today
-        </button>
-
-        <button
-          type="button"
-          className="
-            min-w-0
-            flex-1
-            rounded-full
-            border border-transparent
-            px-1.5 py-2
-            !text-[11px]
-            font-semibold
-            text-gray-500
-            transition-colors
-            hover:text-gray-700
-            sm:!text-[11.5px]
-          "
-        >
-          Yesterday
-        </button>
-
-        <button
-          type="button"
-          className="
-            min-w-0
-            flex-1
-            rounded-full
-            border border-transparent
-            px-1.5 py-2
-            !text-[11px]
-            font-semibold
-            text-gray-500
-            transition-colors
-            hover:text-gray-700
-            sm:!text-[11.5px]
-          "
-        >
-          This Week
-        </button>
+        {filters.map(({ id, label }) => (
+          <button
+            key={id}
+            type="button"
+            aria-pressed={filter === id}
+            onClick={() => {
+              setFilter(id);
+              setShowAll(false);
+            }}
+            className={`min-w-0 flex-1 rounded-full border px-1.5 py-2 !text-[11px] font-semibold transition-colors sm:!text-[11.5px] ${
+              filter === id
+                ? "border-gray-200 bg-white text-gray-800 shadow-sm"
+                : "border-transparent text-gray-500 hover:text-gray-700"
+            }`}
+          >
+            {label}
+          </button>
+        ))}
 
       </div>
 
@@ -187,12 +179,12 @@ const RecentActivities = ({
 
       <div className="mt-3 divide-y divide-gray-100">
 
-        {recentActivities.length === 0 ? (
+        {filteredActivities.length === 0 ? (
           <div className="py-6 text-center text-[11px] text-gray-400">
-            No recent activity.
+            No activity for this period.
           </div>
         ) : (
-          recentActivities.map((activity) => {
+          visibleActivities.map((activity) => {
             const style = activityStyles[activity.type];
             const Icon = style.icon;
 

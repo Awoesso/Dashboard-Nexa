@@ -1259,26 +1259,18 @@ export const getDashboardData = async (
 
   const now = new Date();
 
-  const window = getPeriodWindow(
-    period,
+  const statsWindow = getPeriodWindow(
+    "all",
     now,
     snapshot.storeCreatedAt
   );
 
   const currentOrders = filterOrders(
     snapshot.orders,
-    window.currentStart,
-    window.currentEnd
+    statsWindow.currentStart,
+    statsWindow.currentEnd
   );
-
-  const previousOrders =
-    window.previousStart && window.previousEnd
-      ? filterOrders(
-          snapshot.orders,
-          window.previousStart,
-          window.previousEnd
-        )
-      : [];
+  const previousOrders: Order[] = [];
 
   const currentStats = calculatePeriodStats(
     currentOrders,
@@ -1299,13 +1291,13 @@ export const getDashboardData = async (
     earningsChange: calculatePercentageChange(
       currentStats.earnings,
       previousStats.earnings,
-      period !== "all" && window.comparable
+      false
     ),
 
     ordersChange: calculatePercentageChange(
       currentStats.orders,
       previousStats.orders,
-      period !== "all" && window.comparable
+      false
     ),
 
     productsChange: null,
@@ -1313,7 +1305,7 @@ export const getDashboardData = async (
     salesChange: calculatePercentageChange(
       currentStats.sales,
       previousStats.sales,
-      period !== "all" && window.comparable
+      false
     ),
 
     pendingOrders: currentStats.pendingOrders,
@@ -1322,13 +1314,13 @@ export const getDashboardData = async (
     averageOrderChange: calculatePercentageChange(
       currentStats.averageOrder,
       previousStats.averageOrder,
-      period !== "all" && window.comparable
+      false
     ),
 
     pendingChange: calculatePercentageChange(
       currentStats.pendingOrders,
       previousStats.pendingOrders,
-      period !== "all" && window.comparable
+      false
     ),
 
     currency: getCurrency(
@@ -1497,12 +1489,10 @@ export const getDashboardData = async (
 
   const orderActivities =
     snapshot.orders
-      .slice(0, 10)
       .map(buildOrderActivity);
 
   const notificationActivities =
     snapshot.notifications
-      .slice(0, 10)
       .map(buildNotificationActivity);
 
   const activities = [
@@ -1517,8 +1507,7 @@ export const getDashboardData = async (
         safeDate(b.createdAt)?.getTime() ?? 0;
 
       return dateB - dateA;
-    })
-    .slice(0, 8);
+    });
 
   return {
     stats,

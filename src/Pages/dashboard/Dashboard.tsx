@@ -1,12 +1,12 @@
-import { useState, useMemo } from "react";
-import { ChevronDown } from "lucide-react";
+import { lazy, Suspense, useState, useMemo } from "react";
 import { useDashboard } from "@/hooks/useDashboard";
 import GlobalStatCard from "./GlobalStatCard";
 import DocPerformance from "./DOCPERFORMANCE";
 import DashWallet from "./DahWallet";
-import DashChart from "./DashChart";
 import RecentActivities from "./RecentActivities";
 import { useProfile } from "@/Context/useProfile";
+
+const DashChart = lazy(() => import("./DashChart"));
 
 // ================= WELCOME MESSAGES =================
 
@@ -52,7 +52,7 @@ const Dashboard = () => {
     stats,
     topProducts,
     activities,
-    effectivePeriod,
+    refreshKey,
     periodOptions,
     loading: dashboardLoading,
     error: dashboardError,
@@ -267,17 +267,13 @@ const Dashboard = () => {
                 </span>
               </div>
 
-              <button
-                type="button"
-                className="flex shrink-0 items-center gap-1 rounded-full border border-gray-200 px-2.5 py-1.5 text-[10px] font-semibold text-gray-900 transition hover:bg-gray-50 sm:px-3 sm:text-xs"
-              >
-                Today
-                <ChevronDown size={14} className="shrink-0" />
-              </button>
             </div>
 
             <div className="mt-3 min-w-0 overflow-hidden">
-              <GlobalStatCard stats={stats} />
+              <GlobalStatCard
+                stats={stats}
+                period="Depuis le début"
+              />
             </div>
           </section>
 
@@ -286,11 +282,13 @@ const Dashboard = () => {
           </div>
 
           <div className="min-w-0">
-           <DashChart
-  analytics={analytics}
-  period={effectivePeriod}
-  periodOptions={periodOptions}
-/>
+            <Suspense fallback={null}>
+              <DashChart
+                analytics={analytics}
+                periodOptions={periodOptions}
+                refreshKey={refreshKey}
+              />
+            </Suspense>
           </div>
         </div>
 

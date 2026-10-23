@@ -5,12 +5,10 @@ import {
   updateStoreStatus,
 } from "@/services/storeService";
 import type {
-  StoreDesign,
   StoreFieldErrors,
   StoreFormValues,
   StoreProductPreview,
   StoreRecord,
-  StoreTemplateId,
 } from "@/types/store";
 
 const EMPTY_FORM: StoreFormValues = {
@@ -20,11 +18,6 @@ const EMPTY_FORM: StoreFormValues = {
   currency: "XOF",
   language: "French",
   timezone: "Africa/Lome",
-};
-
-const DEFAULT_DESIGN: StoreDesign = {
-  primaryColor: "#1f2937",
-  accentColor: "#e0a458",
 };
 
 export const useStore = () => {
@@ -37,9 +30,6 @@ export const useStore = () => {
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<StoreFieldErrors>({});
-  const [template, setTemplate] = useState<StoreTemplateId>("atelier");
-  const [design, setDesign] = useState<StoreDesign>(DEFAULT_DESIGN);
-
   useEffect(() => {
     let active = true;
 
@@ -188,9 +178,5 @@ export const useStore = () => {
     fieldErrors,
     save,
     setPublished,
-    template,
-    setTemplate,
-    design,
-    setDesign,
   };
 };

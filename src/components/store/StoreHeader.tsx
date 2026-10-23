@@ -1,4 +1,4 @@
-import { Eye, ExternalLink, Save, Store } from "lucide-react";
+import { ExternalLink, Save, Store } from "lucide-react";
 import { CustomizeButton } from "@/components/store/CustomizeButton";
 import type { StoreStatus } from "@/types/store";
 
@@ -8,7 +8,6 @@ type StoreHeaderProps = {
   status: StoreStatus | null;
   saving: boolean;
   onSave: () => void;
-  onPreview: () => void;
   onPublish: () => void;
 };
 
@@ -18,7 +17,6 @@ const StoreHeader = ({
   status,
   saving,
   onSave,
-  onPreview,
   onPublish,
 }: StoreHeaderProps) => (
   <header className="flex flex-col gap-4 border-b! border-gray-200! pb-5 sm:flex-row sm:items-center sm:justify-between">
@@ -38,9 +36,6 @@ const StoreHeader = ({
     </div>
     <div className="flex flex-wrap items-center gap-2">
       <CustomizeButton storeSlug={slug} />
-      <button type="button" onClick={onPreview} className="inline-flex h-9 items-center gap-2 rounded-full! border! border-gray-200! bg-white! px-3 text-[11px]! font-semibold! text-gray-900! hover:bg-gray-50!">
-        <Eye size={14} /> Aperçu
-      </button>
       <button type="button" onClick={onPublish} disabled={saving} className="inline-flex h-9 items-center gap-2 rounded-full! bg-blue-600! px-3 text-[11px]! font-semibold! text-white! hover:bg-blue-700! disabled:opacity-50!">
         <ExternalLink size={14} /> {status === "active" ? "Gérer publication" : "Publier"}
       </button>

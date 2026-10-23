@@ -45,6 +45,8 @@ export const StoreCartProvider = ({ children }: { children: ReactNode }) => {
   return <StoreCartContext.Provider value={value}>{children}</StoreCartContext.Provider>;
 };
 
+// The hook shares this module with its provider so they stay paired.
+// eslint-disable-next-line react-refresh/only-export-components
 export const useStoreCart = () => {
   const context = useContext(StoreCartContext);
   if (!context) throw new Error("useStoreCart must be used within StoreCartProvider");
