@@ -40,22 +40,13 @@ const MarketplaceHeader = ({
 
           <div className="min-w-0!">
             <h1
-              className="
-              font-heading text-lg! font-semibold tracking-tight text-gray-800 sm:text-xl!
-              "
+              className="app-page-title text-gray-800!"
             >
               Catalogue de produits
             </h1>
 
             <p
-              className="
-                mt-0.5!
-                truncate!
-                text-[10px]!
-                font-medium!
-                text-gray-500!
-                sm:text-[11px]!
-              "
+              className="app-page-description mt-0.5! truncate! text-gray-500!"
             >
               Consultez et gérez les produits de votre boutique.
             </p>

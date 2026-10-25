@@ -25,8 +25,8 @@ const StoreHeader = ({
         <Store size={19} />
       </div>
       <div className="min-w-0">
-        <h1 className="truncate font-heading! text-lg! font-semibold! tracking-tight! text-gray-800! sm:text-xl!">Ma boutique</h1>
-        <p className="mt-0.5 text-[11px]! text-gray-500!">{name || "Configurez votre espace vendeur"}</p>
+        <h1 className="app-page-title truncate! text-gray-800!">Ma boutique</h1>
+        <p className="app-page-description mt-0.5 text-gray-500!">{name || "Configurez votre espace vendeur"}</p>
       </div>
       {status && (
         <span className={`shrink-0 rounded-full px-2.5 py-1 text-[10px]! font-medium! ${status === "active" ? "bg-emerald-50! text-emerald-700!" : "bg-gray-100! text-gray-600!"}`}>

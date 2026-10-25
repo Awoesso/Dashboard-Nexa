@@ -516,11 +516,11 @@ const ProfileStoreSettings = () => {
           <header className="mb-5!">
             <div className="flex! min-w-0! items-end! justify-between! gap-4!">
               <div className="min-w-0!">
-                <h1 className="font-heading! text-lg! font-semibold! tracking-tight! text-gray-900! sm:text-xl!">
+                <h1 className="app-page-title text-gray-900!">
                   Settings
                 </h1>
 
-                <p className="mt-1! max-w-xl! text-[10px]! font-medium! leading-relaxed! text-gray-500! sm:text-[11px]!">
+                <p className="app-page-description! mt-1! max-w-xl! text-gray-500!">
                   Manage your account, store, notifications and
                   security preferences.
                 </p>

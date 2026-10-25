@@ -330,11 +330,9 @@ const Navbar = ({
           className="
             min-w-0!
             truncate!
-            text-base!
+            app-page-title
             font-semibold!
             text-gray-600!
-
-            sm:text-xl!
           "
         >
           Tableau de bord

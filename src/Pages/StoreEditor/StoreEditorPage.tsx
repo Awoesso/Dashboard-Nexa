@@ -98,7 +98,7 @@ export const StoreEditorPage = ({ slug }: StoreEditorPageProps) => {
 
           {tab === "modeles" ? (
             <section className="rounded-2xl border border-slate-200 bg-white p-4">
-              <h2 className="text-sm font-semibold text-slate-900">Modèles</h2>
+              <h2 className="app-section-title text-slate-900">Modèles</h2>
               <p className="mt-1 text-[11px] text-slate-500">Choisissez un modèle et visualisez immédiatement le résultat.</p>
               <div className="mt-4 space-y-3">
                 {TEMPLATES.map((template) => {
@@ -127,7 +127,7 @@ export const StoreEditorPage = ({ slug }: StoreEditorPageProps) => {
           ) : (
             <section className="space-y-4 rounded-2xl border border-slate-200 bg-white p-4">
               <div>
-                <h2 className="text-sm font-semibold text-slate-900">Identité</h2>
+                <h2 className="app-section-title text-slate-900">Identité</h2>
                 <p className="mt-1 text-[11px] text-slate-500">Pays, indicatif et couleurs de la vitrine.</p>
               </div>
               <label className="block text-[11px] font-medium text-slate-700">
@@ -176,7 +176,7 @@ export const StoreEditorPage = ({ slug }: StoreEditorPageProps) => {
 
         <section className="min-w-0 rounded-2xl border border-slate-200 bg-white p-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <h2 className="text-sm font-semibold text-slate-900">Prévisualisation en direct</h2>
+            <h2 className="app-section-title text-slate-900">Prévisualisation en direct</h2>
             <div className="inline-flex rounded-full border border-slate-200 p-1" role="group" aria-label="Format">
               <DeviceButton label="Mobile" active={device === "mobile"} onClick={() => setDevice("mobile")} icon={Smartphone} />
               <DeviceButton label="Tablette" active={device === "tablet"} onClick={() => setDevice("tablet")} icon={Tablet} />

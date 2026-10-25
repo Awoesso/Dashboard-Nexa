@@ -135,7 +135,7 @@ const RecentActivities = ({
 
       <div className="flex min-w-0 items-center justify-between gap-3">
 
-        <h2 className="min-w-0 truncate font-heading !text-[15px] font-semibold tracking-tight text-gray-900">
+        <h2 className="app-section-title min-w-0 truncate text-gray-900">
           Activité récente
         </h2>
 

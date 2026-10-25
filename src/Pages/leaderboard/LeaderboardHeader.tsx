@@ -3,9 +3,9 @@ const LeaderboardHeader = () => {
     <section >
    
       <div className="mb-6!">
-   <h1>Classement des commandes</h1>
+   <h1 className="app-page-title text-gray-800">Classement des commandes</h1>
 
-        <p className="mt-1 text-[11px]! leading-5 text-gray-500 sm:text-sm!">
+        <p className="app-page-description mt-1 text-gray-500!">
 Suivez l’activité de votre boutique et consultez vos commandes récentes.
         </p>
       </div>

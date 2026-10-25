@@ -43,7 +43,7 @@ const ProductPublication = ({
   return (
     <section className="w-full! min-w-0! rounded-2xl! border! border-gray-200! bg-white! p-4! shadow-sm! transition-all! duration-200! sm:p-5!">
       <div className="mb-4!">
-        <h2 className="font-heading! text-[14px]! font-semibold! tracking-tight! text-gray-900! sm:text-[15px]!">
+        <h2 className="app-section-title text-gray-900!">
           Publication
         </h2>
 

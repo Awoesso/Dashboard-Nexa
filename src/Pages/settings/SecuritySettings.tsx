@@ -74,7 +74,7 @@ const SecuritySettings = () => {
           <div className="flex! items-center! gap-2!">
            
 
-            <h2 className="font-heading! text-sm! font-semibold! tracking-tight! text-gray-900! sm:text-[15px]!">
+            <h2 className="app-section-title text-gray-900!">
               Security
             </h2>
           </div>

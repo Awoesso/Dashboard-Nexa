@@ -63,7 +63,7 @@ const ProductHeader = ({
              
 
               <h1
-            className="font-heading text-lg! font-semibold tracking-tight text-gray-800 sm:text-xl!"
+            className="app-page-title text-gray-800!"
               >
                 Nouveau produit
               </h1>
@@ -71,9 +71,7 @@ const ProductHeader = ({
             
             </div>
 
-            <p
-              
-            >
+            <p className="app-page-description mt-1! text-gray-500!">
               Créez et configurez votre produit.
             </p>
           </div>

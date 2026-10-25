@@ -93,7 +93,7 @@ const NotificationSettings = () => {
         <div className="flex! items-center! gap-2.5!">
         
 
-          <h2 className="font-heading! text-[14px]! font-semibold! tracking-tight! text-gray-900! sm:text-[15px]!">
+          <h2 className="app-section-title text-gray-900!">
             Notifications
           </h2>
         </div>

@@ -30,7 +30,7 @@ const StoreOverview = ({
 
     <div className="flex flex-col gap-4 rounded-2xl! border! border-gray-200! bg-white! p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5!">
       <div>
-        <h2 className="font-heading! text-[14px]! font-semibold! text-gray-900!">Votre espace vendeur</h2>
+        <h2 className="app-section-title text-gray-900!">Votre espace vendeur</h2>
         <p className="mt-1 max-w-xl text-[11px]! leading-5! text-gray-500!">
           Gérez votre vitrine et ses options de présentation dans l’atelier DSK connecté à votre boutique.
         </p>

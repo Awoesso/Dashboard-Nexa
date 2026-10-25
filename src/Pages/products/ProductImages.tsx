@@ -143,7 +143,7 @@ const ProductImages = ({
       <div className="mb-4! flex! items-start! justify-between! gap-3!">
         <div className="flex! min-w-0! items-start! gap-3!">
           <div className="min-w-0!">
-            <h2 className="text-[14px]! font-semibold! tracking-tight! text-gray-900! sm:text-[15px]!">
+            <h2 className="app-section-title text-gray-900!">
               Product images
             </h2>
 

@@ -13,7 +13,7 @@ type StoreInformationFormProps = {
 const StoreInformationForm = ({ values, errors, saving, message, onChange, onSave }: StoreInformationFormProps) => (
   <section id="store-section-information" className="scroll-mt-5 rounded-2xl! border! border-gray-200! bg-white! p-4 sm:p-5!">
     <div className="mb-5">
-      <h2 className="font-heading! text-[14px]! font-semibold! text-gray-900!">Informations de la boutique</h2>
+      <h2 className="app-section-title text-gray-900!">Informations de la boutique</h2>
       <p className="mt-1 text-[11px]! text-gray-500!">Ces informations seront utilisées pour présenter votre boutique.</p>
     </div>
     <div className="grid gap-4 sm:grid-cols-2">

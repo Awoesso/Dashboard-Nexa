@@ -243,14 +243,14 @@ const Dashboard = () => {
     <div className="min-h-screen bg-[#fafafa] px-3 py-4 sm:px-4 sm:py-5 lg:px-6 lg:py-6">
       {/* Header */}
       <section>
-        <h1 className="font-heading text-lg font-semibold tracking-tight text-gray-800 sm:text-xl">
+        <h1 className="app-page-title text-gray-800">
           {firstName ? `Bonjour, ${firstName} !` : "Bienvenue !"}
         </h1>
         <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1">
-          <p className="text-[11px] font-medium text-gray-700 sm:text-sm">
+          <p className="app-page-description text-gray-700">
             {currentMessage.title}
           </p>
-          <p className="text-[11px] leading-5 text-gray-500 sm:text-sm">
+          <p className="app-page-description text-gray-500">
             {currentMessage.subtitle}
           </p>
           <button
@@ -277,7 +277,7 @@ const Dashboard = () => {
                 <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gray-900 text-white">
                   <span className="text-[10px]">✦</span>
                 </div>
-                <span className="truncate text-[11px] font-semibold text-gray-900 sm:text-xs">
+                <span className="app-section-title truncate text-gray-900">
                   Résumé de votre activité
                 </span>
               </div>

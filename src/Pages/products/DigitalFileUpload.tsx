@@ -64,7 +64,7 @@ const DigitalFileUpload = ({
         </div>
 
         <div className="min-w-0!">
-          <h2 className="font-heading! text-[14px]! font-semibold! tracking-tight! text-gray-900! sm:text-[15px]!">
+          <h2 className="app-section-title text-gray-900!">
             Fichier numérique
           </h2>
 

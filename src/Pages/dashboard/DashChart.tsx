@@ -193,20 +193,11 @@ const DashChart = ({
 
         <div className="min-w-0">
 
-          <h2
-            className="
-              truncate
-              font-heading
-              text-[15px]!
-              font-semibold
-              tracking-tight
-              text-gray-900
-            "
-          >
+          <h2 className="app-section-title truncate text-gray-900">
             Analytics & Performances
           </h2>
 
-          <p className="mt-0.5 text-[12px]! font-normal text-gray-500">
+          <p className="app-section-description mt-0.5 text-gray-500">
             Understand your earnings and orders
           </p>
 

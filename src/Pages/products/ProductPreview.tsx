@@ -167,7 +167,7 @@ const ProductPreview = ({
             Live preview
           </p>
 
-          <h2 className="mt-1! text-[14px]! font-semibold! tracking-tight! text-gray-900! sm:text-[15px]!">
+          <h2 className="app-section-title mt-1! text-gray-900!">
             Product summary
           </h2>
         </div>

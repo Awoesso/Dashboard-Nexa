@@ -307,7 +307,7 @@ const GeneralSettings = () => {
       ===================================================== */}
 
       <div className="mb-6!">
-        <h2 className="font-heading! text-sm! font-semibold! tracking-tight! text-gray-900! sm:text-[15px]!">
+        <h2 className="app-section-title text-gray-900!">
           Informations personnelles
         </h2>
 

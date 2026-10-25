@@ -35,7 +35,7 @@ const DOCPERFORMANCE = ({ products }: DocPerformanceProps) => {
             />
           </div>
 
-          <h2 className="text-[14px]! font-semibold text-gray-900">
+          <h2 className="app-section-title text-gray-900">
             Produits les plus vendus
           </h2>
 
