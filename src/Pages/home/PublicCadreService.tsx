@@ -52,7 +52,7 @@ export default function NexaReasons() {
       {reasons.map(({ icon: Icon, title, description }) => (
         <article
           key={title}
-          className="flex flex-col gap-5 reveal delay-100 border border-neutral-100 bg-white p-6 "
+          className="flex flex-col gap-5 border border-neutral-100 bg-white p-6 "
         >
           <div className="flex h-12 w-12 items-center justify-center ">
             <Icon size={25} strokeWidth={1.8} />

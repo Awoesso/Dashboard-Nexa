@@ -117,7 +117,7 @@ const DashboardLayout = () => {
 
           <button
             type="button"
-            aria-label="Close navigation"
+            aria-label="Fermer la navigation"
             onClick={handleCloseMobileSidebar}
             className="
               absolute!

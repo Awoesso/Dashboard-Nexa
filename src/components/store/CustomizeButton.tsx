@@ -23,7 +23,7 @@ export const CustomizeButton = ({ storeSlug }: CustomizeButtonProps) => {
       className="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-xs font-bold text-white shadow-sm transition-all hover:bg-slate-800 hover:shadow disabled:cursor-not-allowed disabled:opacity-50"
     >
       <Palette size={14} />
-      <span>Personnaliser ma boutique</span>
+      <span>Personnaliser votre boutique</span>
     </button>
   );
 };

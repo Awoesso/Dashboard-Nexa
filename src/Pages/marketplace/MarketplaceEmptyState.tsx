@@ -65,8 +65,8 @@ const MarketplaceEmptyState = ({
           "
         >
           {hasFilters
-            ? "No products found"
-            : "No products yet"}
+            ? "Aucun produit trouvé"
+            : "Vous n’avez pas encore de produit"}
         </h3>
 
         <p
@@ -79,8 +79,8 @@ const MarketplaceEmptyState = ({
           "
         >
           {hasFilters
-            ? "Try changing your search or clearing it to see more products."
-            : "Add your first product to start building your marketplace."}
+            ? "Veuillez modifier votre recherche ou l’effacer pour afficher d’autres produits."
+            : "Ajoutez votre premier produit pour commencer à développer votre catalogue."}
         </p>
 
         {hasFilters &&
@@ -116,7 +116,7 @@ const MarketplaceEmptyState = ({
                 strokeWidth={1.9}
               />
 
-              Clear search
+              Effacer la recherche
             </button>
           )}
       </div>

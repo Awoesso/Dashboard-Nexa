@@ -57,8 +57,8 @@ const ProductActions = ({
           )}
 
           {isCreating
-            ? "Creating..."
-            : "Review product"}
+            ? "Création en cours…"
+            : "Vérifier le produit"}
         </Button>
 
         {/* CANCEL */}

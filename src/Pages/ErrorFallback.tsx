@@ -11,7 +11,7 @@ export const ErrorFallback = () => {
   // Extraction propre des métadonnées d'erreur
   const isResponseError = isRouteErrorResponse(error);
   const statusCode = isResponseError ? error.status : 500;
-  const statusText = isResponseError ? error.statusText : 'Erreur Serveur';
+  const statusText = isResponseError ? error.statusText : 'Erreur serveur';
   
   const errorMessage = isResponseError
     ? error.data?.message || 'Une erreur inattendue est survenue.'
@@ -75,7 +75,7 @@ export const ErrorFallback = () => {
             className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 text-sm font-semibold text-white hover:bg-slate-800 transition-all shadow-md shadow-slate-900/10 active:scale-[0.98]"
           >
             <Home size={16} />
-            <span>Retour au Tableau de Bord</span>
+            <span>Retour au tableau de bord</span>
           </Link>
         </div>
       </div>

@@ -68,24 +68,24 @@ const getStockLabel = (
   form: ProductFormData,
 ) => {
   if (!form.trackInventory) {
-    return "Not tracked";
+    return "Non suivi";
   }
 
   if (!form.stock.trim()) {
-    return "Not set";
+    return "Non renseigné";
   }
 
   const stock = Number(form.stock);
 
   if (!Number.isFinite(stock)) {
-    return "Not set";
+    return "Non renseignée";
   }
 
   if (stock <= 0) {
-    return "Out of stock";
+    return "Rupture de stock";
   }
 
-  return `${stock} available`;
+  return `${stock} disponible${stock > 1 ? "s" : ""}`;
 };
 
 const getCompletion = (
@@ -185,7 +185,7 @@ const ProductPreview = ({
               src={firstImage}
               alt={
                 form.productName ||
-                "Product preview"
+                "Aperçu du produit"
               }
               className="h-14! w-14! shrink-0! rounded-xl! border! border-gray-200! object-cover!"
             />
@@ -201,20 +201,20 @@ const ProductPreview = ({
           <div className="min-w-0! flex-1!">
             <h3 className="truncate! text-[12px]! font-semibold! tracking-tight! text-gray-900! sm:text-[13px]!">
               {form.productName.trim() ||
-                "Untitled product"}
+                "Produit sans titre"}
             </h3>
 
             <p className="mt-0.5! truncate! text-[10px]! font-medium! text-gray-500! sm:text-[11px]!">
               {form.category ||
-                "No category"}
+                "Sans catégorie"}
             </p>
 
             <div className="mt-2! flex! min-w-0! flex-wrap! items-center! gap-1.5!">
               <span className="rounded-md! bg-white! px-2! py-1! text-[9px]! font-semibold! text-gray-600!">
                 {form.productType ===
                 "digital"
-                  ? "Digital"
-                  : "Physical"}
+                  ? "Numérique"
+                  : "Physique"}
               </span>
 
               {form.brand.trim() && (
@@ -237,7 +237,7 @@ const ProductPreview = ({
               strokeWidth={1.8}
             />
           }
-          label="Price"
+          label="Prix"
         >
           <div className="flex! flex-wrap! items-baseline! justify-end! gap-x-2! gap-y-0.5!">
             <span className="text-[12px]! font-semibold! tracking-tight! text-gray-900!">
@@ -264,7 +264,7 @@ const ProductPreview = ({
                 strokeWidth={1.8}
               />
             }
-            label="Inventory"
+            label="Stock"
           >
             <div className="flex! items-center! justify-end! gap-2!">
               <span className="truncate! text-[10px]! font-semibold! text-gray-700!">
@@ -302,7 +302,7 @@ const ProductPreview = ({
                 strokeWidth={1.8}
               />
             }
-            label="Digital file"
+            label="Fichier numérique"
           >
             <span
               className={`
@@ -316,8 +316,8 @@ const ProductPreview = ({
               `}
             >
               {digitalFile
-                ? "Attached"
-                : "Missing"}
+                ? "Ajouté"
+                : "Manquant"}
             </span>
           </SummaryRow>
         )}
@@ -333,7 +333,7 @@ const ProductPreview = ({
             }
             label={
               form.optionName.trim() ||
-              "Options"
+              "Déclinaisons"
             }
           >
             <div className="flex! flex-wrap! justify-end! gap-1!">
@@ -370,7 +370,7 @@ const ProductPreview = ({
                   strokeWidth={1.8}
                 />
               }
-              label="Shipping"
+              label="Livraison"
             >
               <div className="text-[10px]! font-medium! text-gray-700!">
                 {form.weight.trim() && (
@@ -407,7 +407,7 @@ const ProductPreview = ({
               strokeWidth={1.8}
             />
           }
-          label="Gallery"
+          label="Galerie"
         >
           <span className="text-[10px]! font-semibold! text-gray-700!">
             {images.length} / 8
@@ -447,7 +447,7 @@ const ProductPreview = ({
             done={Boolean(
               form.productName.trim(),
             )}
-            label="Basic info"
+            label="Informations générales"
           />
 
           <CompletionCheck
@@ -457,7 +457,7 @@ const ProductPreview = ({
               ) &&
               Number(form.price) >= 0
             }
-            label="Pricing"
+            label="Tarification"
           />
 
           <CompletionCheck
@@ -478,7 +478,7 @@ const ProductPreview = ({
             label={
               form.productType ===
               "digital"
-                ? "File"
+                ? "Fichier"
                 : "Stock"
             }
           />

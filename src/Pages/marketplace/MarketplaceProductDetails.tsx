@@ -96,7 +96,7 @@ const MarketplaceProductDetails = () => {
 
     const loadProduct = async () => {
       if (!productId) {
-        setError("Product not found.");
+        setError("Produit introuvable.");
         setIsLoading(false);
         return;
       }
@@ -113,7 +113,7 @@ const MarketplaceProductDetails = () => {
       } catch (err) {
         if (isMounted) {
           setError(
-            err instanceof Error ? err.message : "Unable to load this product.",
+            err instanceof Error ? err.message : "Nous ne pouvons pas charger ce produit pour le moment.",
           );
         }
       } finally {
@@ -143,11 +143,11 @@ const MarketplaceProductDetails = () => {
           </div>
 
           <h2 className="mt-4! text-sm! font-semibold! text-gray-900!">
-            Product unavailable
+            Produit indisponible
           </h2>
 
           <p className="mt-2! text-xs! leading-5! text-gray-500!">
-            {error || "This product could not be found."}
+            {error || "Ce produit est introuvable."}
           </p>
 
           <Link
@@ -173,7 +173,7 @@ const MarketplaceProductDetails = () => {
             "
           >
             <ArrowLeft className="h-3.5! w-3.5!" />
-            Back to marketplace
+            Retour au catalogue
           </Link>
         </div>
       </div>
@@ -182,15 +182,15 @@ const MarketplaceProductDetails = () => {
 
   const statusConfig = {
     published: {
-      label: "Published",
+      label: "Publié",
       dot: "bg-green-500!",
     },
     draft: {
-      label: "Draft",
+      label: "Brouillon",
       dot: "bg-gray-400!",
     },
     archived: {
-      label: "Archived",
+      label: "Archivé",
       dot: "bg-gray-300!",
     },
   } as const;
@@ -220,7 +220,7 @@ const MarketplaceProductDetails = () => {
           "
         >
           <ArrowLeft className="h-3.5! w-3.5! shrink-0!" />
-          <span className="truncate!">Marketplace</span>
+          <span className="truncate!">Catalogue de produits</span>
         </Link>
       </div>
 
@@ -315,11 +315,11 @@ const MarketplaceProductDetails = () => {
             <div className="flex! items-center! gap-2!">
               <div>
                 <h2 className="text-sm! font-semibold! text-gray-900!">
-                  Product information
+                  Informations sur le produit
                 </h2>
 
                 <p className="mt-0.5! text-[10px]! text-gray-400!">
-                  Basic details
+                  Informations générales
                 </p>
               </div>
             </div>
@@ -328,7 +328,7 @@ const MarketplaceProductDetails = () => {
 
 
               <div className="flex! items-center! justify-between! gap-4! py-3! first:pt-0!">
-                <span className="text-xs! text-gray-500!">Name</span>
+                <span className="text-xs! text-gray-500!">Nom</span>
 
                 <span className="truncate! text-right! text-xs! font-medium! text-gray-900!">
                   {product.name}
@@ -338,7 +338,7 @@ const MarketplaceProductDetails = () => {
 
 
               <div className="flex! items-center! justify-between! gap-4! py-3! first:pt-0!">
-                <span className="text-xs! text-gray-500!">Category</span>
+                <span className="text-xs! text-gray-500!">Catégorie</span>
 
                 <span className="truncate! text-right! text-xs! font-medium! text-gray-900!">
                   {product.category || "—"}
@@ -346,7 +346,7 @@ const MarketplaceProductDetails = () => {
               </div>
 
               <div className="flex! items-center! justify-between! gap-4! py-3!">
-                <span className="text-xs! text-gray-500!">Status</span>
+                <span className="text-xs! text-gray-500!">Statut</span>
 
                 <span className="inline-flex! items-center! gap-1.5! text-xs! font-medium! text-gray-900!">
                   <span
@@ -357,21 +357,21 @@ const MarketplaceProductDetails = () => {
               </div>
 
 <div className="flex! items-center! justify-between! gap-4! py-3!">
-                <span className="text-xs! text-gray-500!">Price</span>
+                <span className="text-xs! text-gray-500!">Prix</span>
 
                 <span className="text-xs! font-medium! text-gray-900!">
                   {product.price}
                 </span>
               </div>
               <div className="flex! items-center! justify-between! gap-4! py-3!">
-                <span className="text-xs! text-gray-500!">Currency</span>
+                <span className="text-xs! text-gray-500!">Devise</span>
 
                 <span className="text-xs! font-medium! text-gray-900!">
                   {product.currency}
                 </span>
               </div>
               <div className="flex! items-center! justify-between! gap-4! py-3!">
-                <span className="text-xs! text-gray-500!">Sales</span>
+                <span className="text-xs! text-gray-500!">Ventes</span>
 
                 <span className="text-xs! font-medium! text-gray-900!">
                   {product.sales_count}
@@ -381,7 +381,7 @@ const MarketplaceProductDetails = () => {
 
 
               <div className="flex! items-center! justify-between! gap-4! py-3!">
-                <span className="text-xs! text-gray-500!">Views</span>
+                <span className="text-xs! text-gray-500!">Vues</span>
 
                 <span className="text-xs! font-medium! text-gray-900!">
                   {product.view_count}
@@ -390,7 +390,7 @@ const MarketplaceProductDetails = () => {
 
               <div className="flex! items-center! justify-between! gap-4! py-3! last:pb-0!">
                 <span className="inline-flex! items-center! gap-1.5! text-xs! text-gray-500!">
-                  Created
+                  Créé le
                 </span>
 
                 <span className="text-right! text-xs! font-medium! text-gray-900!">

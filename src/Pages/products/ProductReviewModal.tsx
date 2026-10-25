@@ -61,7 +61,7 @@ const ProductReviewModal = ({
             </p>
 
             <h2 className="mt-0.5! text-base! font-bold! tracking-tight! text-gray-900! sm:text-lg!">
-              Review product
+              Vérifier le produit
             </h2>
 
             <p className="mt-1! text-[11px]! font-medium! text-gray-500!">
@@ -95,7 +95,7 @@ const ProductReviewModal = ({
               <div className="aspect-square!">
                 <img
                   src={previewImage}
-                  alt={form.productName || "Product"}
+                  alt={form.productName || "Produit"}
                   className="h-full! w-full! object-cover!"
                 />
               </div>
@@ -133,7 +133,7 @@ const ProductReviewModal = ({
               </div>
 
               <h3 className="mt-3! line-clamp-2! text-lg! font-bold! tracking-tight! text-gray-900!">
-                {form.productName || "Product Name"}
+                {form.productName || "Nom du produit"}
               </h3>
 
               {form.brand && (
@@ -163,8 +163,8 @@ const ProductReviewModal = ({
                     />
                     <span>
                       {form.trackInventory
-                        ? `${form.stock || 0} units in stock`
-                        : "Inventory not tracked"}
+                        ? `${form.stock || 0} unités en stock`
+                        : "Stock non suivi"}
                     </span>
                   </>
                 ) : (
@@ -173,7 +173,7 @@ const ProductReviewModal = ({
                       size={12}
                       className="text-gray-400!"
                     />
-                    <span>Digital delivery</span>
+                    <span>Livraison numérique</span>
                   </>
                 )}
               </div>
@@ -197,12 +197,12 @@ const ProductReviewModal = ({
 
             <div className="grid! grid-cols-1! gap-2! sm:grid-cols-2!">
               <ReviewItem
-                label="SKU"
-                value={form.sku || "Not set"}
+                label="Référence"
+                value={form.sku || "Non renseignée"}
               />
 
               <ReviewItem
-                label="Category"
+                label="Catégorie"
                 value={form.category}
               />
 
@@ -212,7 +212,7 @@ const ProductReviewModal = ({
               />
 
               <ReviewItem
-                label="Status"
+                label="Statut"
                 value={form.status}
               />
             </div>
@@ -299,35 +299,35 @@ const ProductReviewModal = ({
                   label="Stock"
                   value={
                     form.trackInventory
-                      ? `${form.stock || 0} units`
-                      : "Not tracked"
+                      ? `${form.stock || 0} unités`
+                      : "Non suivi"
                   }
                 />
 
                 <ReviewItem
-                  label="Weight"
+                  label="Poids"
                   value={
                     form.weight
                       ? `${form.weight} kg`
-                      : "Not set"
+                      : "Non renseigné"
                   }
                 />
 
                 <ReviewItem
-                  label="Length"
+                  label="Longueur"
                   value={
                     form.length
                       ? `${form.length}`
-                      : "Not set"
+                      : "Non renseignée"
                   }
                 />
 
                 <ReviewItem
-                  label="Width"
+                  label="Largeur"
                   value={
                     form.width
                       ? `${form.width}`
-                      : "Not set"
+                      : "Non renseignée"
                   }
                 />
               </div>
@@ -346,7 +346,7 @@ const ProductReviewModal = ({
                 </div>
 
                 <h3 className="text-xs! font-bold! text-gray-900!">
-                  Digital file
+                  Fichier numérique
                 </h3>
               </div>
 
@@ -385,7 +385,7 @@ const ProductReviewModal = ({
             disabled={isCreating}
             className="inline-flex! h-10! items-center! justify-center! rounded-xl! border! border-gray-200! bg-white! px-5! text-xs! font-bold! text-gray-600! transition-all! hover:border-gray-300! hover:text-gray-900! disabled:opacity-50!"
           >
-            Back
+            Retour
           </button>
 
           <button
@@ -402,7 +402,7 @@ const ProductReviewModal = ({
             ) : (
               <>
                 <Check size={14} />
-                Create product
+                Créer le produit
               </>
             )}
           </button>

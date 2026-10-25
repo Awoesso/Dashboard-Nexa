@@ -39,7 +39,7 @@ const MarketplaceListSkeleton = () => {
         "
       >
         <div className="min-w-0! flex-1!">
-          Product
+          Produit
         </div>
 
         <div className="w-28! shrink-0!">
@@ -55,7 +55,7 @@ const MarketplaceListSkeleton = () => {
         </div>
 
         <div className="w-24! shrink-0!">
-          Status
+          Statut
         </div>
 
         <div className="w-16! shrink-0!" />
@@ -122,7 +122,7 @@ const MarketplaceList = ({
         "
       >
         <div className="min-w-0! flex-1!">
-          Product
+          Produit
         </div>
 
         <div className="w-28! shrink-0!">

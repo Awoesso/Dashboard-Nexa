@@ -70,7 +70,7 @@ const CustomTooltip = ({
 
         <div className="flex items-center justify-between gap-4">
           <span className="text-[9px]! font-normal text-gray-500">
-            Earnings
+            Revenus
           </span>
 
           <span className="font-mono text-[9px]! font-medium text-gray-900">
@@ -82,7 +82,7 @@ const CustomTooltip = ({
 
         <div className="flex items-center justify-between gap-4">
           <span className="text-[9px]! font-normal text-gray-500">
-            Orders
+            Commandes
           </span>
 
           <span className="font-mono text-[9px]! font-medium text-gray-900">
@@ -248,7 +248,7 @@ const DashChart = ({
           <span className="h-2 w-2 shrink-0 rounded-full bg-blue-600" />
 
           <span className="text-[10px]! font-medium text-gray-600">
-            Earnings
+            Revenus
           </span>
 
         </div>

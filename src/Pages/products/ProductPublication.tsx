@@ -48,7 +48,7 @@ const ProductPublication = ({
         </h2>
 
         <p className="mt-0.5! text-[10px]! font-medium! text-gray-500! sm:text-[11px]!">
-          Choose how this product appears in your store.
+          Choisissez la manière dont ce produit apparaîtra dans votre boutique.
         </p>
       </div>
 
@@ -56,16 +56,16 @@ const ProductPublication = ({
         <PublicationOption
           active={status === "draft"}
           icon={<Lock size={15} strokeWidth={1.9} />}
-          title="Draft"
-          description="Keep the product private."
+          title="Brouillon"
+          description="Le produit reste privé."
           onClick={() => onChange("draft")}
         />
 
         <PublicationOption
           active={status === "published"}
           icon={<Globe size={15} strokeWidth={1.9} />}
-          title="Published"
-          description="Make the product visible."
+          title="Publié"
+          description="Le produit est visible dans votre boutique."
           onClick={() => onChange("published")}
         />
       </div>

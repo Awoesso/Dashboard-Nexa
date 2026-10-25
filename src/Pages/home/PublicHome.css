@@ -22,10 +22,12 @@
   color: var(--rich-black);
   min-height: 100vh;
   padding: 0 ;
-}@keyframes fadeInUp {
+}
+
+@keyframes public-menu-enter {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(-12px);
   }
   to {
     opacity: 1;
@@ -33,18 +35,36 @@
   }
 }
 
-/* État initial : invisible et décalé */
-.reveal {
-  opacity: 0;
-  transform: translateY(30px);
+.public-menu-enter {
+  animation: public-menu-enter 180ms ease-out;
 }
 
-/* Déclenchement automatique dès que le JS ajoute .active */
-.reveal.active {
-  animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+.public-cta-label-hover {
+  transform: translateY(100%);
+  transition: transform 250ms ease-in-out;
 }
 
-/* Délais pour l'effet en cascade */
-.reveal.active.delay-100 { animation-delay: 150ms; }
-.reveal.active.delay-200 { animation-delay: 300ms; }
-.reveal.active.delay-300 { animation-delay: 450ms; }
+.public-cta-label {
+  transition: transform 250ms ease-in-out;
+}
+
+.public-cta:hover .public-cta-label {
+  transform: translateY(-100%);
+}
+
+.public-cta:hover .public-cta-label-hover {
+  transform: translateY(0);
+}
+
+.public-cta:active {
+  transform: scale(0.97);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .public-menu-enter,
+  .public-cta-label,
+  .public-cta-label-hover {
+    animation: none;
+    transition: none;
+  }
+}

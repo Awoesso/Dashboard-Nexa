@@ -93,7 +93,7 @@ const ProductInventory = ({
               text-gray-900!
             "
           >
-            Inventory
+            Stock et références
           </h2>
         </div>
 
@@ -106,7 +106,7 @@ const ProductInventory = ({
             sm:text-[11px]!
           "
         >
-          Track stock and product identification.
+          Suivez les quantités disponibles et les références de vos produits.
         </p>
       </div>
 
@@ -147,7 +147,7 @@ const ProductInventory = ({
                   text-gray-900!
                 "
               >
-                Track inventory
+                Suivre le stock
               </p>
 
               <p
@@ -159,7 +159,7 @@ const ProductInventory = ({
                   text-gray-500!
                 "
               >
-                Keep track of available units.
+                Suivez le nombre d’unités disponibles.
               </p>
             </div>
           </div>
@@ -168,7 +168,7 @@ const ProductInventory = ({
   type="button"
   role="switch"
   aria-checked={form.trackInventory}
-  aria-label="Track inventory"
+  aria-label="Suivre le stock"
   onClick={() =>
     updateForm(
       "trackInventory",
@@ -221,7 +221,7 @@ const ProductInventory = ({
         <div className="grid! gap-4! sm:grid-cols-2!">
           <Field
             id="product-stock"
-            label="Stock"
+            label="Quantité en stock"
             value={form.stock}
             placeholder="0"
             type="number"

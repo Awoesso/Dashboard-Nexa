@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { AnimatePresence, motion, type Variants } from "framer-motion";
 import { ArrowUpRight, Menu, X } from "lucide-react";
 import { createPortal } from "react-dom";
 import { Link } from "react-router-dom";
@@ -11,26 +10,6 @@ const navigationLinks = [
   { label: "Ressources", to: "/" },
   { label: "À propos", to: "/" },
 ];
-
-const menuVariants: Variants = {
-  hidden: {},
-  visible: {
-    transition: { delayChildren: 0.22, staggerChildren: 0.09 },
-  },
-  exit: {
-    transition: { staggerChildren: 0.04, staggerDirection: -1 },
-  },
-};
-
-const linkVariants: Variants = {
-  hidden: { opacity: 0, x: 36 },
-  visible: {
-    opacity: 1,
-    x: 0,
-    transition: { type: "spring", stiffness: 180, damping: 20 },
-  },
-  exit: { opacity: 0, x: 24, transition: { duration: 0.16 } },
-};
 
 const PublicHeader = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -100,37 +79,22 @@ const PublicHeader = () => {
           onClick={() => setIsOpen((open) => !open)}
           className="relative z-100 flex h-11 w-11 items-center justify-center rounded-full   text-gray-900 lg:hidden"
         >
-          <AnimatePresence initial={false} mode="wait">
-            <motion.span
-              key={isOpen ? "close" : "open"}
-              initial={{ opacity: 0, rotate: -45, scale: 0.8 }}
-              animate={{ opacity: 1, rotate: 0, scale: 1 }}
-              exit={{ opacity: 0, rotate: 45, scale: 0.8 }}
-              transition={{ duration: 0.18 }}
-              className="flex"
-            >
-              {isOpen ? <X size={21} /> : <Menu size={21} />}
-            </motion.span>
-          </AnimatePresence>
+          <span className="flex">
+            {isOpen ? <X size={21} /> : <Menu size={21} />}
+          </span>
         </button>
       </div>
 
       </header>
 
       {createPortal(
-        <AnimatePresence>
-          {isOpen && (
-            <motion.div
+        isOpen ? (
+            <div
               id="public-mobile-menu"
-              key="mobile-menu"
               role="dialog"
               aria-modal="true"
               aria-label="Menu principal"
-              initial={{ opacity: 0, y: -12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              transition={{ duration: 0.24, ease: "easeOut" }}
-              className="fixed inset-x-0 bottom-0 top-17 z-1000 overflow-y-auto bg-gradient-to-b from-white to-white! text-black lg:hidden"
+              className="public-menu-enter fixed inset-x-0 bottom-0 top-17 z-1000 overflow-y-auto bg-gradient-to-b from-white to-white! text-black lg:hidden"
             >
               <div className="mx-auto flex min-h-[calc(100svh-4.25rem)] w-full max-w-7xl flex-col justify-center px-7 pb-10 pt-10 sm:px-12 lg:grid lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-center lg:gap-20 lg:px-24 lg:py-20">
                 <div className="mb-12 lg:mb-0">
@@ -155,16 +119,12 @@ const PublicHeader = () => {
                   </div>
                 </div>
 
-                <motion.nav
+                <nav
                   aria-label="Liens du menu"
-                  variants={menuVariants}
-                  initial="hidden"
-                  animate="visible"
-                  exit="exit"
                   className="flex flex-col"
                 >
                   {navigationLinks.map((item, index) => (
-                    <motion.div key={item.label} variants={linkVariants}>
+                    <div key={item.label}>
                       <Link
                         to={item.to}
                         onClick={closeMenu}
@@ -177,15 +137,14 @@ const PublicHeader = () => {
                         <ArrowUpRight
                           size={22}
                           className="opacity-0 transition-opacity group-hover:opacity-100"
-                        />
-                      </Link>
-                    </motion.div>
-                  ))}
-              </motion.nav>
+                      />
+                    </Link>
+                  </div>
+                ))}
+              </nav>
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>,
+            </div>
+        ) : null,
         document.body,
       )}
     </>

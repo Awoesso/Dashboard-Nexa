@@ -362,7 +362,7 @@ const ProductsNew = () => {
       !digitalFile
     ) {
       nextErrors.digitalFile =
-        "Please select a digital file.";
+        "Veuillez sélectionner un fichier numérique.";
     }
 
     setErrors(nextErrors);

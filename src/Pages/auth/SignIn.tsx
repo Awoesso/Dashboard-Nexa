@@ -48,12 +48,12 @@ const SignIn = () => {
     const { email, password } = formData;
 
     if (!email.trim()) {
-      nextErrors.email = "Saisis l’adresse e-mail associée à ton compte.";
+      nextErrors.email = "Veuillez saisir l’adresse e-mail associée à votre compte.";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
-      nextErrors.email = "Vérifie le format de ton adresse e-mail.";
+      nextErrors.email = "Veuillez vérifier le format de votre adresse e-mail.";
     }
     if (!password) {
-      nextErrors.password = "Saisis ton mot de passe pour continuer.";
+      nextErrors.password = "Veuillez saisir votre mot de passe pour continuer.";
     }
 
     setFieldErrors(nextErrors);
@@ -87,7 +87,7 @@ const SignIn = () => {
         setError({
           title: "Connexion impossible",
           message:
-            "Vérifie ton adresse e-mail et ton mot de passe. Si tu viens de créer ton compte, confirme d’abord ton adresse e-mail.",
+            "Veuillez vérifier votre adresse e-mail et votre mot de passe. Si vous venez de créer votre compte, confirmez d’abord votre adresse e-mail.",
         });
         return;
       }
@@ -106,7 +106,7 @@ const SignIn = () => {
 
       setError({
         title: "Un problème est survenu",
-        message: "Nous n’avons pas pu te connecter. Réessaie dans quelques instants.",
+        message: "Nous ne pouvons pas vous connecter pour le moment. Veuillez réessayer dans quelques instants.",
       });
     } finally {
       setLoading(false);
@@ -121,13 +121,13 @@ const SignIn = () => {
       if (!result.success) {
         setError({
           title: "Connexion Google indisponible",
-          message: "Réessaie dans quelques instants ou connecte-toi avec ton adresse e-mail.",
+          message: "Veuillez réessayer dans quelques instants ou vous connecter avec votre adresse e-mail.",
         });
       }
     } catch {
       setError({
         title: "Connexion Google indisponible",
-        message: "Réessaie dans quelques instants ou connecte-toi avec ton adresse e-mail.",
+        message: "Veuillez réessayer dans quelques instants ou vous connecter avec votre adresse e-mail.",
       });
     } finally {
       setLoading(false);
@@ -150,11 +150,11 @@ const SignIn = () => {
         <div className="mb-6 text-center sm:mb-7">
 
           <h1 className="text-2xl! font-semibold tracking-tight text-gray-900 sm:text-4xl! whitespace-nowrap">
-          Ravi de te revoir
+          Heureux de vous retrouver
           </h1>
 
           <p className="mx-auto mt-2 max-w-85 text-[12px]! leading-5 text-gray-500 sm:text-[13px]!">
-            Connecte-toi pour accéder à ton espace et retrouver ton activité.
+            Connectez-vous pour accéder à votre espace et retrouver votre activité.
           </p>
 
         </div>
@@ -186,7 +186,7 @@ const SignIn = () => {
                 htmlFor="email"
                 className="mb-1.5 block text-[11px]! font-medium text-gray-800 sm:text-[12px]!"
               >
-                Email
+                Adresse e-mail
               </label>
 
               <input
@@ -195,7 +195,7 @@ const SignIn = () => {
                 type="email"
                 value={formData.email}
                 onChange={handleChange}
-                placeholder="you@example.com"
+                placeholder="vous@exemple.com"
                 autoComplete="email"
                 required
                 aria-invalid={Boolean(fieldErrors.email)}

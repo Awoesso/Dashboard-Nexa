@@ -1,12 +1,10 @@
-import { useEffect, useState } from "react";
-import Button from "@/components/ui/Button";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
-  MoreHorizontal,
-  FileText,
   Wallet,
   Clock,
   ChevronRight,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 import {
   getWalletSummary,
@@ -17,14 +15,10 @@ import {
 /* Helpers                                                                    */
 /* -------------------------------------------------------------------------- */
 
-const formatAmount = (
-  amount: number,
-  currency: string
-): string => {
-  return `${new Intl.NumberFormat("fr-FR", {
+const formatAmount = (amount: number, currency: string): string =>
+  `${new Intl.NumberFormat("fr-FR", {
     maximumFractionDigits: 2,
   }).format(amount)} ${currency}`;
-};
 
 const formatRelativeTime = (
   date: string | null
@@ -96,65 +90,70 @@ const DahWallet = () => {
 
   const [error, setError] =
     useState<string | null>(null);
+  const mountedRef = useRef(false);
+
+  const loadWallet = useCallback(async () => {
+    try {
+      const data = await getWalletSummary();
+      if (mountedRef.current) {
+        setWallet(data);
+        setError(null);
+      }
+    } catch (loadError: unknown) {
+      console.error("Erreur chargement wallet :", loadError);
+      if (mountedRef.current) {
+        setError(
+          loadError instanceof Error
+            ? loadError.message
+            : "Impossible de charger les revenus encaissés.",
+        );
+      }
+    } finally {
+      if (mountedRef.current) setLoading(false);
+    }
+  }, []);
 
   /* ------------------------------------------------------------------------ */
   /* Chargement                                                               */
   /* ------------------------------------------------------------------------ */
 
   useEffect(() => {
-    let mounted = true;
-
-    const loadWallet = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const data = await getWalletSummary();
-
-        if (!mounted) {
-          return;
+    mountedRef.current = true;
+    void getWalletSummary()
+      .then((data) => {
+        if (mountedRef.current) {
+          setWallet(data);
+          setError(null);
         }
-
-        setWallet(data);
-      } catch (error: unknown) {
-        console.error(
-          "Erreur chargement wallet :",
-          error
-        );
-
-        if (!mounted) {
-          return;
+      })
+      .catch((loadError: unknown) => {
+        console.error("Erreur chargement wallet :", loadError);
+        if (mountedRef.current) {
+          setError(
+            loadError instanceof Error
+              ? loadError.message
+              : "Impossible de charger les revenus encaissés.",
+          );
         }
-
-        setError(
-          error instanceof Error
-            ? error.message
-            : "Impossible de charger le wallet."
-        );
-      } finally {
-        if (mounted) {
-          setLoading(false);
-        }
-      }
-    };
-
-    void loadWallet();
+      })
+      .finally(() => {
+        if (mountedRef.current) setLoading(false);
+      });
 
     return () => {
-      mounted = false;
+      mountedRef.current = false;
     };
-  }, []);
+  }, [loadWallet]);
+
+  const retryWallet = () => {
+    setLoading(true);
+    setError(null);
+    void loadWallet();
+  };
 
   /* ------------------------------------------------------------------------ */
   /* Données affichées                                                        */
   /* ------------------------------------------------------------------------ */
-
-  const balance = wallet
-    ? formatAmount(
-        wallet.balance,
-        wallet.currency
-      )
-    : "—";
 
   const lastActivity = wallet
     ? formatRelativeTime(wallet.lastActivity)
@@ -176,29 +175,10 @@ const DahWallet = () => {
           />
 
           <span className="truncate text-[14px]! font-semibold text-gray-900">
-            Your Wallet
+            Revenus encaissés
           </span>
 
         </div>
-
-        <button
-          type="button"
-          aria-label="Wallet options"
-          className="
-            shrink-0
-            rounded-lg
-            p-1
-            text-gray-400
-            transition-colors
-            hover:bg-gray-100
-            hover:text-gray-700
-            focus:outline-none
-            focus:ring-2
-            focus:ring-gray-900/5
-          "
-        >
-          <MoreHorizontal size={16} />
-        </button>
 
       </div>
 
@@ -219,70 +199,79 @@ const DahWallet = () => {
         <div className="text-center">
 
           <p className="text-[10px]! font-medium text-gray-500">
-            Your Balance
+            Total des paiements reçus
           </p>
 
-          <p className="mt-1 text-[20px]! font-semibold tracking-tight text-gray-900 sm:text-[22px]!">
-            {loading ? "—" : balance}
-          </p>
-
-          <p className="mt-0.5 text-[10px]! font-medium text-gray-500">
-            {error
-              ? "Erreur de chargement"
-              : wallet
-                ? wallet.currency
-                : "—"}
-          </p>
+          {loading ? (
+            <p className="mt-1 text-[20px]! font-semibold tracking-tight text-gray-900 sm:text-[22px]!">
+              —
+            </p>
+          ) : error ? (
+            <p className="mt-1 text-xs font-medium text-red-600">
+              Revenus indisponibles
+            </p>
+          ) : wallet?.balances.length ? (
+            <ul className="mt-2 space-y-1">
+              {wallet.balances.map(({ currency, amount }) => (
+                <li
+                  key={currency}
+                  className="text-[20px] font-semibold tracking-tight text-gray-900 sm:text-[22px]"
+                >
+                  {formatAmount(amount, currency)}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="mt-1 text-[20px]! font-semibold tracking-tight text-gray-900 sm:text-[22px]!">
+              0 XOF
+            </p>
+          )}
 
         </div>
 
-        <Button
+        <Link
+          to="/dashboard/leaderboard"
           className="
             mt-4
-            flex
+            inline-flex
             w-full
             items-center
             justify-center
             gap-1.5
+            rounded-lg
+            bg-blue-900
             px-4
             py-2.5
             text-[12px]!
+            font-semibold
+            text-white
+            transition-colors
+            hover:bg-blue-800
+            focus:outline-none
+            focus:ring-2
+            focus:ring-blue-500/30
             sm:text-[13px]!
           "
         >
-          Transfer to Bank
+          Consulter les commandes
           <ChevronRight size={16} />
-        </Button>
+        </Link>
+        {error && (
+          <button
+            type="button"
+            onClick={retryWallet}
+            disabled={loading}
+            className="mt-3 w-full text-center text-xs font-medium text-blue-700 underline disabled:cursor-wait disabled:opacity-60"
+          >
+            {loading ? "Actualisation en cours…" : "Réessayer"}
+          </button>
+        )}
 
       </div>
 
       {/* ================= DETAILS ================= */}
 
       <div className="mt-4 divide-y divide-gray-100 border-t border-gray-100">
-
-        {/* Documents */}
-
-        <div className="flex items-center justify-between gap-4 py-3">
-
-          <div className="flex min-w-0 items-center gap-2">
-
-            <FileText
-              size={12}
-              strokeWidth={1.8}
-              className="shrink-0 text-gray-600"
-            />
-
-            <span className="truncate text-[12px]! font-medium text-gray-500">
-              Documents owned
-            </span>
-
-          </div>
-
-          <span className="shrink-0 text-[10px]! font-semibold text-gray-700">
-            —
-          </span>
-
-        </div>
 
         {/* Activity */}
 
@@ -297,7 +286,7 @@ const DahWallet = () => {
             />
 
             <span className="truncate text-[12px]! font-medium text-gray-500">
-              Last activity
+              Dernière activité
             </span>
 
           </div>

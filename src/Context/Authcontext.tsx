@@ -81,7 +81,7 @@ export const AuthcontextProvider = ({
       if (!rateLimitResult.allowed) {
         return {
           success: false,
-          error: `Too many signup attempts. Please try again in ${rateLimitResult.waitSeconds} seconds.`,
+          error: `Trop de tentatives de création de compte. Veuillez réessayer dans ${rateLimitResult.waitSeconds} secondes.`,
         };
       }
 
@@ -143,7 +143,7 @@ export const AuthcontextProvider = ({
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : "Unable to verify this code.",
+        error: error instanceof Error ? error.message : "Nous ne pouvons pas vérifier ce code pour le moment.",
       };
     }
   };
@@ -156,7 +156,7 @@ export const AuthcontextProvider = ({
       if (!rateLimitResult.allowed) {
         return {
           success: false,
-          error: `Too many requests. Try again in ${rateLimitResult.waitSeconds} seconds.`,
+          error: `Trop de demandes. Veuillez réessayer dans ${rateLimitResult.waitSeconds} secondes.`,
         };
       }
 
@@ -171,7 +171,7 @@ export const AuthcontextProvider = ({
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : "Unable to resend the code.",
+        error: error instanceof Error ? error.message : "Nous ne pouvons pas renvoyer le code pour le moment.",
       };
     }
   };
@@ -191,7 +191,7 @@ export const AuthcontextProvider = ({
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : "Unable to start sign-in.",
+        error: error instanceof Error ? error.message : "Nous ne pouvons pas démarrer la connexion pour le moment.",
       };
     }
   };
@@ -209,7 +209,7 @@ export const AuthcontextProvider = ({
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : "Unable to request a reset.",
+        error: error instanceof Error ? error.message : "Nous ne pouvons pas envoyer le lien de réinitialisation pour le moment.",
       };
     }
   };
@@ -228,7 +228,7 @@ export const AuthcontextProvider = ({
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : "Unable to update the password.",
+        error: error instanceof Error ? error.message : "Nous ne pouvons pas mettre à jour le mot de passe pour le moment.",
       };
     }
   };
@@ -242,7 +242,7 @@ export const AuthcontextProvider = ({
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : "Unable to revoke other sessions.",
+        error: error instanceof Error ? error.message : "Nous ne pouvons pas révoquer les autres sessions pour le moment.",
       };
     }
   };
@@ -268,7 +268,7 @@ export const AuthcontextProvider = ({
       if (!rateLimitResult.allowed) {
         return {
           success: false,
-          error: `Too many login attempts. Please try again in ${rateLimitResult.waitSeconds} seconds.`,
+          error: `Trop de tentatives de connexion. Veuillez réessayer dans ${rateLimitResult.waitSeconds} secondes.`,
         };
       }
 

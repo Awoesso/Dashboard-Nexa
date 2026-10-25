@@ -33,18 +33,18 @@ const Sidebar = ({
 }: SidebarProps) => {
   const primaryItems: SidebarItem[] = [
     {
-      label: "Dashboard",
+      label: "Tableau de bord",
       icon: LayoutDashboard,
       path: "/dashboard/home",
     },
     {
-      label: "Add a Product",
+      label: "Ajouter un produit",
       icon: PlusCircle,
       path: "/dashboard/products/new",
     },
     
     {
-      label: "Marketplace",
+      label: "Catalogue",
       icon: Store,
       path: "/dashboard/marketplace",
     },
@@ -57,12 +57,12 @@ const Sidebar = ({
       path: "/dashboard/store",
     },
     {
-      label: "Finance",
+      label: "Finances",
       icon: Wallet,
       path: "/dashboard/finance",
     },
     {
-      label: "Leaderboard",
+      label: "Classement",
       icon: Trophy,
       path: "/dashboard/leaderboard",
     },
@@ -70,12 +70,12 @@ const Sidebar = ({
 
   const supportItems: SidebarItem[] = [
     {
-      label: "Settings",
+      label: "Paramètres",
       icon: Settings,
       path: "/dashboard/settings",
     },
     {
-      label: "Help & FAQ",
+      label: "Aide et FAQ",
       icon: CircleHelp,
       path: "/dashboard/help",
     },
@@ -251,7 +251,7 @@ const Sidebar = ({
                 event.stopPropagation();
                 onToggle();
               }}
-              aria-label="Close sidebar"
+              aria-label="Fermer la barre latérale"
               className="
                 group
                 relative!
@@ -301,7 +301,7 @@ const Sidebar = ({
 
               <input
                 type="text"
-                placeholder="Search here..."
+                placeholder="Rechercher..."
                 className="
                   h-9!
                   w-full!
@@ -400,7 +400,7 @@ const Sidebar = ({
                     text-gray-500!
                   "
                 >
-                  Profile & Support
+                  Profil et assistance
                 </span>
 
                 <span className="text-[10px]! font-semibold! text-gray-400!">
@@ -498,7 +498,7 @@ const Sidebar = ({
           onClick={onToggle}
           aria-label={
             collapsed
-              ? "Open sidebar"
+              ? "Ouvrir la barre latérale"
               : "Collapse sidebar"
           }
           className="
@@ -545,7 +545,7 @@ const Sidebar = ({
         {collapsed ? (
           <button
             type="button"
-            title="Search"
+            title="Rechercher"
             className="
               flex!
               h-10!
@@ -582,7 +582,7 @@ const Sidebar = ({
 
             <input
               type="text"
-              placeholder="Search here..."
+              placeholder="Rechercher..."
               className="
                 h-9!
                 w-full!
@@ -691,7 +691,7 @@ const Sidebar = ({
                   text-gray-500!
                 "
               >
-                Profile & Support
+                Profil et assistance
               </span>
 
               <span className="text-[10px]! font-semibold! text-gray-400!">

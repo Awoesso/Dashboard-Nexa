@@ -148,7 +148,7 @@ const ProductImages = ({
             </h2>
 
             <p className="mt-0.5! text-[10px]! font-medium! leading-relaxed! text-gray-500! sm:text-[11px]!">
-              Upload clear images to present your product.
+              Ajoutez des images nettes pour mettre votre produit en valeur.
             </p>
           </div>
         </div>
@@ -242,7 +242,7 @@ const ProductImages = ({
             Choose files
           </button>
           <p className="mt-3! text-[11px]! font-semibold! text-gray-700! sm:text-[12px]!">
-            Click to upload or drag and drop
+            Cliquez pour sélectionner des images ou faites-les glisser ici.
           </p>
 
           <p className="mt-1! text-[10px]! font-medium! text-gray-400!">
@@ -367,7 +367,7 @@ const ProductImages = ({
               disabled:opacity-40!
             "
           >
-            Add more
+            Ajouter d’autres images
           </button>
         )}
       </div>

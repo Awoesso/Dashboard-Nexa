@@ -43,7 +43,7 @@ const formatRelativeTime = (
   const time = new Date(createdAt).getTime();
 
   if (Number.isNaN(time)) {
-    return "Recently";
+    return "Récemment";
   }
 
   const diffMinutes = Math.max(
@@ -54,23 +54,23 @@ const formatRelativeTime = (
   );
 
   if (diffMinutes < 1) {
-    return "Now";
+    return "À l’instant";
   }
 
   if (diffMinutes < 60) {
-    return `${diffMinutes}m`;
+    return `Il y a ${diffMinutes} min`;
   }
 
   const diffHours = Math.floor(diffMinutes / 60);
 
   if (diffHours < 24) {
-    return `${diffHours}h`;
+    return `Il y a ${diffHours} h`;
   }
 
   const diffDays = Math.floor(diffHours / 24);
 
   if (diffDays < 7) {
-    return `${diffDays}d`;
+    return `Il y a ${diffDays} j`;
   }
 
   return new Date(createdAt).toLocaleDateString(
@@ -123,9 +123,9 @@ const RecentActivities = ({
     ? filteredActivities
     : filteredActivities.slice(0, 4);
   const filters: { id: ActivityFilter; label: string }[] = [
-    { id: "today", label: "Today" },
-    { id: "yesterday", label: "Yesterday" },
-    { id: "week", label: "This Week" },
+    { id: "today", label: "Aujourd’hui" },
+    { id: "yesterday", label: "Hier" },
+    { id: "week", label: "Cette semaine" },
   ];
 
   return (
@@ -136,7 +136,7 @@ const RecentActivities = ({
       <div className="flex min-w-0 items-center justify-between gap-3">
 
         <h2 className="min-w-0 truncate font-heading !text-[15px] font-semibold tracking-tight text-gray-900">
-          Recent Activities
+          Activité récente
         </h2>
 
         <button
@@ -145,7 +145,7 @@ const RecentActivities = ({
           onClick={() => setShowAll((current) => !current)}
           className="shrink-0 rounded-full border border-gray-200 px-2.5 py-1 !text-xs font-medium text-gray-700 transition-colors hover:bg-gray-50"
         >
-          {showAll ? "Show Less" : "See All"}
+          {showAll ? "Afficher moins" : "Tout afficher"}
         </button>
 
       </div>
@@ -181,7 +181,7 @@ const RecentActivities = ({
 
         {filteredActivities.length === 0 ? (
           <div className="py-6 text-center text-[11px] text-gray-400">
-            No activity for this period.
+            Aucune activité pour cette période.
           </div>
         ) : (
           visibleActivities.map((activity) => {

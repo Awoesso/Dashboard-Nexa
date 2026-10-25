@@ -76,7 +76,7 @@ const ProductDeleteModal = ({
 
       <button
         type="button"
-        aria-label="Close"
+        aria-label="Fermer"
         onClick={() => {
           if (!isDeleting) {
             onClose();
@@ -113,11 +113,11 @@ const ProductDeleteModal = ({
                 id="delete-product-title"
                 className="text-[14px]! font-semibold! tracking-tight! text-gray-900! sm:text-[15px]!"
               >
-                Delete product
+                Supprimer le produit
               </h2>
 
               <p className="mt-1! text-[10px]! font-medium! leading-relaxed! text-gray-500! sm:text-[11px]!">
-                This action cannot be undone.
+                Cette action est irréversible.
               </p>
             </div>
           </div>
@@ -128,7 +128,7 @@ const ProductDeleteModal = ({
             disabled={
               isDeleting
             }
-            aria-label="Close"
+            aria-label="Fermer"
             className="
               flex!
               h-8!
@@ -175,8 +175,7 @@ const ProductDeleteModal = ({
                 </p>
 
                 <p className="mt-1! text-[11px]! font-medium! leading-relaxed! text-gray-500!">
-                  This product will be removed from
-                  your Marketplace.
+                  Ce produit sera retiré de votre catalogue.
                 </p>
               </div>
             </div>
@@ -232,7 +231,7 @@ const ProductDeleteModal = ({
               sm:text-[11px]!
             "
           >
-            Cancel
+            Annuler
           </button>
 
           <button
@@ -272,7 +271,7 @@ const ProductDeleteModal = ({
                   className="animate-spin!"
                 />
 
-                Deleting...
+                Suppression en cours…
               </>
             ) : (
               <>
@@ -281,7 +280,7 @@ const ProductDeleteModal = ({
                   strokeWidth={1.9}
                 />
 
-                Delete product
+                Supprimer le produit
               </>
             )}
           </button>

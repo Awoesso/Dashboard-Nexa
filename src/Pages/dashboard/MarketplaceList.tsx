@@ -47,7 +47,7 @@ const MarketplaceList = ({
         </div>
 
         <div className="w-20! shrink-0!">
-          Sales
+          Ventes
         </div>
 
         <div className="w-28! shrink-0!">
@@ -55,7 +55,7 @@ const MarketplaceList = ({
         </div>
 
         <div className="w-28! shrink-0!">
-          Status
+          Statut
         </div>
       </div>
 

@@ -187,15 +187,15 @@ const ProductRow = ({
 
   const statusConfig = {
     published: {
-      label: "Published",
+      label: "Publié",
       dot: "bg-green-500!",
     },
     draft: {
-      label: "Draft",
+      label: "Brouillon",
       dot: "bg-gray-400!",
     },
     archived: {
-      label: "Archived",
+      label: "Archivé",
       dot: "bg-gray-300!",
     },
   } as const;
@@ -316,7 +316,7 @@ const ProductRow = ({
           >
             <span className="truncate! text-[9px]! font-medium! text-gray-400!">
               {product.category ||
-                "Uncategorized"}
+                "Sans catégorie"}
             </span>
 
             {product.description && (
@@ -555,7 +555,7 @@ const ProductRow = ({
               >
               
 
-                Edit product
+                Modifier le produit
               </Link>
 
               <div className="my-1! h-px! bg-gray-100!" />
@@ -590,7 +590,7 @@ const ProductRow = ({
                   strokeWidth={1.8}
                 />
 
-                Delete product
+                Supprimer le produit
               </button>
             </div>
           )}

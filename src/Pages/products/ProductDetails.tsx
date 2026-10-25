@@ -131,7 +131,7 @@ const ProductDetails = ({
          
 
             <label className="text-[11px]! font-semibold! text-gray-700!">
-              Product type
+              Type de produit
             </label>
           </div>
 
@@ -139,8 +139,8 @@ const ProductDetails = ({
             <TypeOption
               active={form.productType === "physical"}
               icon={<Box size={15} strokeWidth={1.8} />}
-              title="Physical"
-              description="Ships to customers"
+              title="Physique"
+              description="Livré à vos clients"
               onClick={() =>
                 updateForm(
                   "productType",
@@ -157,8 +157,8 @@ const ProductDetails = ({
                   strokeWidth={1.8}
                 />
               }
-              title="Digital"
-              description="Delivered as a file"
+              title="Numérique"
+              description="Fourni sous forme de fichier"
               onClick={() =>
                 updateForm(
                   "productType",
@@ -174,9 +174,9 @@ const ProductDetails = ({
         <div className="grid! min-w-0! gap-4! sm:grid-cols-2!">
           <Field
             id="product-name"
-            label="Product name"
+            label="Nom du produit"
             value={form.productName}
-            placeholder="Example: Nike Air Max"
+            placeholder="Exemple : sac en cuir"
             error={errors.productName}
             onChange={(value) =>
               updateForm("productName", value)
@@ -194,7 +194,7 @@ const ProductDetails = ({
                 text-gray-700!
               "
             >
-              Category
+              Catégorie
             </label>
 
             <div className="relative!">
@@ -210,43 +210,43 @@ const ProductDetails = ({
                 className={`${inputClass} appearance-none! pr-9!`}
               >
                 <option value="">
-                  Select category
+                  Sélectionnez une catégorie
                 </option>
 
                 <option value="Electronics">
-                  Electronics
+                  Électronique
                 </option>
 
                 <option value="Fashion">
-                  Fashion
+                  Mode
                 </option>
 
                 <option value="Books">
-                  Books
+                  Livres
                 </option>
 
                 <option value="Home">
-                  Home
+                  Maison
                 </option>
 
                 <option value="Beauty">
-                  Beauty
+                  Beauté
                 </option>
 
                 <option value="Sports">
-                  Sports
+                  Sport
                 </option>
 
                 <option value="Accessories">
-                  Accessories
+                  Accessoires
                 </option>
 
                 <option value="Digital">
-                  Digital
+                  Numérique
                 </option>
 
                 <option value="Other">
-                  Other
+                  Autre
                 </option>
               </select>
 
@@ -278,14 +278,14 @@ const ProductDetails = ({
           id="product-brand"
           label={
             <>
-              Brand{" "}
+              Marque{" "}
               <span className="font-medium! text-gray-400!">
-                (Optional)
+                (Facultatif)
               </span>
             </>
           }
           value={form.brand}
-          placeholder="Nike, Samsung, Apple..."
+          placeholder="Exemple : Samsung, Apple…"
           onChange={(value) =>
             updateForm("brand", value)
           }
@@ -332,7 +332,7 @@ const ProductDetails = ({
                 event.target.value,
               )
             }
-            placeholder="Describe your product..."
+            placeholder="Décrivez votre produit…"
             rows={6}
             className="
               w-full!

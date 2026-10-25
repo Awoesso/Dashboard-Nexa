@@ -16,9 +16,9 @@ import { STORE_COUNTRIES, findStoreCountry } from "@/data/storeCountries";
 import type { DskStoreTemplateId, StorePreviewDevice } from "@/types/store";
 
 const TEMPLATES: { id: DskStoreTemplateId; name: string; description: string; frame: string }[] = [
-  { id: "fashion", name: "Fashion", description: "Éditorial, luxe et lookbook", frame: "bg-rose-50" },
-  { id: "tech", name: "Tech", description: "Contraste fort et catalogue produit", frame: "bg-slate-900" },
-  { id: "general", name: "General", description: "Vitrine claire et polyvalente", frame: "bg-amber-50" },
+  { id: "fashion", name: "Mode", description: "Éditorial, luxe et lookbook", frame: "bg-rose-50" },
+  { id: "tech", name: "Technologie", description: "Contraste fort et catalogue produit", frame: "bg-slate-900" },
+  { id: "general", name: "Polyvalent", description: "Vitrine claire et polyvalente", frame: "bg-amber-50" },
 ];
 
 const DEVICE_WIDTH: Record<StorePreviewDevice, string> = {
@@ -99,7 +99,7 @@ export const StoreEditorPage = ({ slug }: StoreEditorPageProps) => {
           {tab === "modeles" ? (
             <section className="rounded-2xl border border-slate-200 bg-white p-4">
               <h2 className="text-sm font-semibold text-slate-900">Modèles</h2>
-              <p className="mt-1 text-[11px] text-slate-500">Fashion, Tech ou General — aperçu immédiat.</p>
+              <p className="mt-1 text-[11px] text-slate-500">Choisissez un modèle et visualisez immédiatement le résultat.</p>
               <div className="mt-4 space-y-3">
                 {TEMPLATES.map((template) => {
                   const selected = settings.template === template.id;

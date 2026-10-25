@@ -24,7 +24,7 @@ const ProductShipping = ({
        
         <div className="min-w-0!">
           <h2 className="text-[14px]! font-semibold! tracking-tight! text-gray-900! sm:text-[15px]!">
-            Shipping
+            Livraison
           </h2>
 
           <p className="mt-0.5! text-[10px]! font-medium! leading-relaxed! text-gray-500! sm:text-[11px]!">
@@ -43,7 +43,7 @@ const ProductShipping = ({
           />
 
           <label className="text-[11px]! font-semibold! text-gray-700! sm:text-[12px]!">
-            Weight
+            Poids
           </label>
         </div>
 
@@ -108,7 +108,7 @@ const ProductShipping = ({
           {/* LENGTH */}
           <div>
             <label className="mb-1! block! text-[10px]! font-medium! text-gray-500!">
-              Length
+              Longueur
             </label>
 
             <input
@@ -146,7 +146,7 @@ const ProductShipping = ({
           {/* WIDTH */}
           <div>
             <label className="mb-1! block! text-[10px]! font-medium! text-gray-500!">
-              Width
+              Largeur
             </label>
 
             <input
@@ -224,7 +224,7 @@ const ProductShipping = ({
       {/* NOTE */}
       <div className="mt-4! rounded-xl! border! border-gray-200! bg-[#fafafa]! px-3! py-2.5!">
         <p className="text-[10px]! font-medium! leading-relaxed! text-gray-500!">
-          Shipping information is optional and can be completed later.
+          Les informations de livraison sont facultatives et peuvent être renseignées ultérieurement.
         </p>
       </div>
     </section>

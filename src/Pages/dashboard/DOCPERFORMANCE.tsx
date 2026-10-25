@@ -7,15 +7,15 @@ type DocPerformanceProps = {
 };
 
 const columns = [
-  "Products",
-  "Price",
-  "Sales",
-  "Earnings",
-  "Status",
+  "Produits",
+  "Prix",
+  "Ventes",
+  "Revenus",
+  "Statut",
 ];
 
-const formatCurrency = (value: number) =>
-  `${value.toLocaleString("fr-FR")} XOF`;
+const formatCurrency = (value: number, currency: string) =>
+  `${value.toLocaleString("fr-FR")} ${currency}`;
 
 const DOCPERFORMANCE = ({ products }: DocPerformanceProps) => {
   return (
@@ -36,7 +36,7 @@ const DOCPERFORMANCE = ({ products }: DocPerformanceProps) => {
           </div>
 
           <h2 className="text-[14px]! font-semibold text-gray-900">
-       Top Selling Products
+            Produits les plus vendus
           </h2>
 
         </div>
@@ -46,7 +46,7 @@ const DOCPERFORMANCE = ({ products }: DocPerformanceProps) => {
           to="/dashboard/marketplace"
           className="rounded-full border border-gray-200 px-3 py-1.5 text-xs font-semibold text-gray-900 transition hover:bg-gray-50"
         >
-          See All
+          Tout afficher
         </Link>
 
       </div>
@@ -76,17 +76,18 @@ const DOCPERFORMANCE = ({ products }: DocPerformanceProps) => {
 
         {products.length === 0 && (
           <div className="py-8 text-center text-[11px] text-gray-400">
-            No products found.
+            Aucun produit n’a été trouvé.
           </div>
         )}
 
         {/* Rows */}
 
         {products.map((product) => (
-            <div
+            <Link
               key={product.id}
-              title="see details"
-              className="grid grid-cols-[1.8fr_0.8fr_0.7fr_0.9fr_0.7fr] cursor-pointer items-center border-b border-gray-100 px-3 py-2.5"
+              to={`/dashboard/marketplace/${product.id}`}
+              aria-label={`Consulter le produit ${product.name}`}
+              className="grid grid-cols-[1.8fr_0.8fr_0.7fr_0.9fr_0.7fr] items-center border-b border-gray-100 px-3 py-2.5 transition-colors hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500"
             >
 
               {/* Product */}
@@ -123,7 +124,7 @@ const DOCPERFORMANCE = ({ products }: DocPerformanceProps) => {
               {/* Price */}
 
               <span className="text-[11px] text-gray-700">
-                {formatCurrency(product.price)}
+                {formatCurrency(product.price, product.currency)}
               </span>
 
               {/* Downloads */}
@@ -135,7 +136,7 @@ const DOCPERFORMANCE = ({ products }: DocPerformanceProps) => {
               {/* Earnings */}
 
               <span className="text-[11px] text-gray-700">
-                {formatCurrency(product.earnings)}
+                {formatCurrency(product.earnings, product.currency)}
               </span>
 
               {/* Status */}
@@ -147,12 +148,14 @@ const DOCPERFORMANCE = ({ products }: DocPerformanceProps) => {
                     : "bg-orange-100 text-orange-600"
                 }`}
               >
-                {product.status
-                  ? product.status.charAt(0).toUpperCase() + product.status.slice(1)
-                  : "Draft"}
+                {product.status === "published"
+                  ? "Publié"
+                  : product.status === "archived"
+                    ? "Archivé"
+                    : "Brouillon"}
               </span>
 
-            </div>
+            </Link>
           ))}
 
       </div>

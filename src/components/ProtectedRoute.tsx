@@ -115,7 +115,7 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     <main className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
       <section className="w-full max-w-sm rounded-xl border border-gray-200 bg-white p-5">
         <h1 className="text-lg font-semibold text-gray-900">Vérification en deux étapes</h1>
-        <p className="mt-2 text-sm text-gray-600">Saisis le code affiché par ton application d’authentification.</p>
+        <p className="mt-2 text-sm text-gray-600">Veuillez saisir le code affiché par votre application d’authentification.</p>
         {error && <p role="alert" className="mt-3 text-sm text-red-700">{error}</p>}
         <form onSubmit={verifyCode} className="mt-4 space-y-3">
           <label htmlFor="protected-mfa-code" className="sr-only">Code TOTP</label>

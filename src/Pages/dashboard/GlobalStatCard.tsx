@@ -14,7 +14,7 @@ const GlobalStatCard = ({ stats, period }: GlobalStatCardProps) => {
   const metrics = [
     {
       id: "earnings",
-      label: "Total Earnings",
+      label: "Revenus totaux",
       value: stats.totalEarnings,
       change: stats.earningsChange,
       currency: stats.currency,
@@ -22,7 +22,7 @@ const GlobalStatCard = ({ stats, period }: GlobalStatCardProps) => {
     },
     {
       id: "orders",
-      label: "Total Orders",
+      label: "Commandes totales",
       value: stats.totalOrders,
       change: stats.ordersChange,
       currency: "",
@@ -30,7 +30,7 @@ const GlobalStatCard = ({ stats, period }: GlobalStatCardProps) => {
     },
     {
       id: "products",
-      label: "Products",
+      label: "Produits",
       value: stats.products,
       change: stats.productsChange,
       currency: "",
@@ -38,7 +38,7 @@ const GlobalStatCard = ({ stats, period }: GlobalStatCardProps) => {
     },
     {
       id: "sales",
-      label: "Total Sales",
+      label: "Ventes totales",
       value: stats.totalSales,
       change: stats.salesChange,
       period,

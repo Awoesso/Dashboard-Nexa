@@ -165,7 +165,7 @@ const AccountSecurityActions = () => {
         </div>
         <div>
           <h3 className="text-xs font-semibold text-gray-900">Authentification à deux facteurs</h3>
-          <p className="mt-1 text-[10px] leading-4 text-gray-500">Protège le compte avec une application compatible TOTP.</p>
+          <p className="mt-1 text-[10px] leading-4 text-gray-500">Protégez votre compte à l’aide d’une application compatible avec le protocole TOTP.</p>
           {factors.length ? (
             factors.map((factor) => <div key={factor.id} className="mt-2 flex items-center justify-between gap-2 text-xs"><span>{factor.friendly_name || "Application TOTP"}</span><button type="button" disabled={busy} onClick={() => void removeTotp(factor.id)} className="text-red-700 underline">Désactiver</button></div>)
           ) : (
@@ -185,7 +185,7 @@ const AccountSecurityActions = () => {
 
       <section>
         <h3 className="text-xs font-semibold text-gray-900">Sessions actives</h3>
-        <p className="mt-1 text-[10px] leading-4 text-gray-500">Supabase ne fournit pas la liste détaillée des appareils via l’API cliente; tu peux révoquer toutes les autres sessions.</p>
+        <p className="mt-1 text-[10px] leading-4 text-gray-500">La liste détaillée des appareils n’est pas disponible ici. Vous pouvez toutefois révoquer toutes les autres sessions.</p>
         <button type="button" disabled={busy} onClick={() => void revokeOtherSessions()} className={actionClass}>Déconnecter les autres appareils</button>
       </section>
 
@@ -195,7 +195,7 @@ const AccountSecurityActions = () => {
         <h3 className="text-xs font-semibold text-red-800">Zone dangereuse</h3>
         <p className="mt-1 text-[10px] leading-4 text-gray-600">La suppression de votre compte est irréversible. Les boutiques contenant des commandes seront archivées afin de préserver les données de commande.</p>
         <form onSubmit={deleteAccount} className="mt-3 max-w-md">
-          <label htmlFor="delete-confirmation" className="block text-[10px] font-medium text-gray-700">Saisis SUPPRIMER MON COMPTE</label>
+          <label htmlFor="delete-confirmation" className="block text-[10px] font-medium text-gray-700">Pour confirmer, veuillez saisir SUPPRIMER MON COMPTE</label>
           <input id="delete-confirmation" required value={confirmation} onChange={(event) => setConfirmation(event.target.value)} className={inputClass} />
           <button type="submit" disabled={busy || confirmation !== "SUPPRIMER MON COMPTE"} className="mt-3 h-9 rounded-lg bg-red-700 px-3 text-xs font-semibold text-white disabled:opacity-50">Supprimer mon compte</button>
         </form>

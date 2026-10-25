@@ -44,7 +44,7 @@ const MarketplaceHeader = ({
               font-heading text-lg! font-semibold tracking-tight text-gray-800 sm:text-xl!
               "
             >
-              Marketplace
+              Catalogue de produits
             </h1>
 
             <p
@@ -57,7 +57,7 @@ const MarketplaceHeader = ({
                 sm:text-[11px]!
               "
             >
-              Manage and monitor your products.
+              Consultez et gérez les produits de votre boutique.
             </p>
           </div>
         </div>

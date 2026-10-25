@@ -17,9 +17,9 @@ const StoreOverview = ({
 }: StoreOverviewProps) => (
   <section id="store-section-overview" className="scroll-mt-5 space-y-4">
     <div className="grid gap-3 sm:grid-cols-3">
-      <Metric icon={Store} label="Statut" value={store ? (store.status === "active" ? "Active" : "Inactive") : "À configurer"} detail={store?.status === "active" ? "La boutique est activée" : "Non visible comme boutique active"} />
+      <Metric icon={Store} label="Statut" value={store ? (store.status === "active" ? "Activée" : "Désactivée") : "À configurer"} detail={store?.status === "active" ? "La boutique est activée" : "La boutique n’est pas visible en ligne"} />
       <Metric icon={Package} label="Produits" value={String(productCount)} detail={`${publishedCount} publié${publishedCount === 1 ? "" : "s"}`} />
-      <Metric icon={Store} label="Adresse boutique" value={store?.slug ? store.slug : "À définir"} detail="Identifiant utilisé par l’atelier DSK" />
+      <Metric icon={Store} label="Adresse de la boutique" value={store?.slug ? store.slug : "À définir"} detail="Adresse utilisée pour personnaliser votre boutique" />
     </div>
 
     {!store && (

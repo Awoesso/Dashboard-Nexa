@@ -222,7 +222,7 @@ const ProfileStoreSettings = () => {
 
     if (!file.type.startsWith("image/")) {
       setSaveError(
-        "Please select a valid image file.",
+        "Veuillez sélectionner un fichier image valide.",
       );
 
       event.target.value = "";
@@ -286,7 +286,7 @@ const ProfileStoreSettings = () => {
       setSaveError(
         err instanceof Error
           ? err.message
-          : "Unable to upload the image.",
+          : "Nous ne pouvons pas envoyer l’image pour le moment.",
       );
     } finally {
       setIsUploading(false);
@@ -342,7 +342,7 @@ const ProfileStoreSettings = () => {
 
     if (!session?.user?.id) {
       setSaveError(
-        "Your session could not be found.",
+        "Votre session est introuvable.",
       );
 
       return;
@@ -350,7 +350,7 @@ const ProfileStoreSettings = () => {
 
     if (!firstName.trim()) {
       setSaveError(
-        "First name is required.",
+        "Veuillez renseigner votre prénom.",
       );
 
       setActiveTab("general");
@@ -359,7 +359,7 @@ const ProfileStoreSettings = () => {
 
     if (!lastName.trim()) {
       setSaveError(
-        "Last name is required.",
+        "Veuillez renseigner votre nom.",
       );
 
       setActiveTab("general");
@@ -424,7 +424,7 @@ const ProfileStoreSettings = () => {
       setSaveError(
         err instanceof Error
           ? err.message
-          : "Unable to save settings.",
+          : "Nous ne pouvons pas enregistrer les paramètres pour le moment.",
       );
     } finally {
       setIsSaving(false);
@@ -543,7 +543,7 @@ const ProfileStoreSettings = () => {
           <div className="mb-5! overflow-x-auto! border-b! border-gray-200!">
             <nav
               className="flex! min-w-max! items-center! gap-5! sm:gap-6!"
-              aria-label="Settings navigation"
+              aria-label="Navigation des paramètres"
             >
               <SettingsTab
                 active={
@@ -555,7 +555,7 @@ const ProfileStoreSettings = () => {
                     strokeWidth={1.8}
                   />
                 }
-                label="General"
+                label="Général"
                 onClick={() =>
                   setActiveTab("general")
                 }
@@ -571,7 +571,7 @@ const ProfileStoreSettings = () => {
                     strokeWidth={1.8}
                   />
                 }
-                label="Store"
+                label="Boutique"
                 onClick={() =>
                   setActiveTab("store")
                 }
@@ -607,7 +607,7 @@ const ProfileStoreSettings = () => {
                     strokeWidth={1.8}
                   />
                 }
-                label="Security"
+                label="Sécurité"
                 onClick={() =>
                   setActiveTab("security")
                 }
@@ -714,7 +714,7 @@ const ProfileStoreSettings = () => {
                     />
 
                     <p className="text-[10px]! font-semibold! sm:text-[11px]!">
-                      Settings saved successfully.
+                      Paramètres enregistrés.
                     </p>
                   </div>
                 )}
@@ -817,7 +817,7 @@ const ProfileStoreSettings = () => {
                         size={13}
                         className="animate-spin!"
                       />
-                      Saving...
+                      Enregistrement en cours…
                     </>
                   ) : (
                     <>
@@ -825,7 +825,7 @@ const ProfileStoreSettings = () => {
                         size={13}
                         strokeWidth={2.1}
                       />
-                      Save changes
+                      Enregistrer les modifications
                     </>
                   )}
                 </button>
@@ -967,11 +967,11 @@ const GeneralSection = ({
 
       <div className="p-4! sm:p-5!">
         <h2 className="font-heading! text-[14px]! font-semibold! tracking-tight! text-gray-900! sm:text-[15px]!">
-          Personal information
+          Informations personnelles
         </h2>
 
         <p className="mt-0.5! text-[10px]! font-medium! leading-relaxed! text-gray-500! sm:text-[11px]!">
-          Manage the information associated with your account.
+          Gérez les informations associées à votre compte.
         </p>
       </div>
 
@@ -979,8 +979,8 @@ const GeneralSection = ({
 
       <div className="grid! grid-cols-1! gap-4! p-4! sm:grid-cols-[180px_minmax(0,1fr)]! sm:p-5!">
         <SettingLabel
-          title="Profile photo"
-          description="Use a clear image for your account."
+          title="Photo de profil"
+          description="Choisissez une image nette pour votre compte."
         />
 
         <div className="min-w-0!">
@@ -989,7 +989,7 @@ const GeneralSection = ({
               {avatarUrl ? (
                 <img
                   src={avatarUrl}
-                  alt="Profile"
+                  alt="Photo de profil"
                   className="h-full! w-full! object-cover!"
                 />
               ) : (
@@ -1058,11 +1058,11 @@ const GeneralSection = ({
                   size={12}
                   strokeWidth={1.9}
                 />
-                Update photo
+                Modifier la photo
               </button>
 
               <p className="mt-1.5! text-[9px]! font-medium! text-gray-400!">
-                JPG, PNG or WEBP · Max 5 MB
+                JPG, PNG ou WEBP · 5 Mo maximum
               </p>
             </div>
           </div>
@@ -1072,7 +1072,7 @@ const GeneralSection = ({
               htmlFor="settings-avatar-url"
               className="mb-1.5! block! text-[10px]! font-semibold! text-gray-700!"
             >
-              Image URL
+              Adresse de l’image
             </label>
 
             <input
@@ -1095,16 +1095,16 @@ const GeneralSection = ({
 
       <div className="grid! grid-cols-1! gap-4! p-4! sm:grid-cols-[180px_minmax(0,1fr)]! sm:p-5!">
         <SettingLabel
-          title="Full name"
-          description="Your name used across the dashboard."
+          title="Nom complet"
+          description="Le nom affiché dans votre tableau de bord."
         />
 
         <div className="grid! min-w-0! grid-cols-1! gap-3! sm:grid-cols-2!">
           <Field
             id="settings-first-name"
-            label="First name"
+            label="Prénom"
             value={firstName}
-            placeholder="First name"
+            placeholder="Prénom"
             onChange={
               onFirstNameChange
             }
@@ -1112,9 +1112,9 @@ const GeneralSection = ({
 
           <Field
             id="settings-last-name"
-            label="Last name"
+            label="Nom"
             value={lastName}
-            placeholder="Last name"
+            placeholder="Nom"
             onChange={
               onLastNameChange
             }
@@ -1126,8 +1126,8 @@ const GeneralSection = ({
 
       <div className="grid! grid-cols-1! gap-4! p-4! sm:grid-cols-[180px_minmax(0,1fr)]! sm:p-5!">
         <SettingLabel
-          title="Email address"
-          description="Used for authentication and account alerts."
+          title="Adresse e-mail"
+          description="Utilisée pour vous connecter et recevoir les alertes de votre compte."
         />
 
         <div className="relative! min-w-0!">
@@ -1150,13 +1150,13 @@ const GeneralSection = ({
 
       <div className="grid! grid-cols-1! gap-4! p-4! sm:grid-cols-[180px_minmax(0,1fr)]! sm:p-5!">
         <SettingLabel
-          title="Phone number"
-          description="Main contact number for your account."
+          title="Numéro de téléphone"
+          description="Numéro principal associé à votre compte."
         />
 
         <Field
           id="settings-phone"
-          label="Phone"
+          label="Téléphone"
           value={phone}
           placeholder="+228 90 00 00 00"
           type="tel"
@@ -1170,8 +1170,8 @@ const GeneralSection = ({
 
       <div className="grid! grid-cols-1! gap-4! p-4! sm:grid-cols-[180px_minmax(0,1fr)]! sm:p-5!">
         <SettingLabel
-          title="Bio"
-          description="A short description for your profile."
+          title="Présentation"
+          description="Une courte description de votre profil."
         />
 
         <textarea
@@ -1183,7 +1183,7 @@ const GeneralSection = ({
               event.target.value,
             )
           }
-          placeholder="Write a short summary..."
+          placeholder="Rédigez une courte présentation…"
           className="
             w-full!
             min-w-0!
@@ -1243,11 +1243,11 @@ const StoreSection = ({
     <div className="divide-y! divide-gray-200!">
       <div className="p-4! sm:p-5!">
         <h2 className="font-heading! text-[14px]! font-semibold! tracking-tight! text-gray-900! sm:text-[15px]!">
-          Store details
+          Informations de la boutique
         </h2>
 
         <p className="mt-0.5! text-[10px]! font-medium! leading-relaxed! text-gray-500! sm:text-[11px]!">
-          Configure the information associated with your store.
+          Configurez les informations associées à votre boutique.
         </p>
       </div>
 
@@ -1255,15 +1255,15 @@ const StoreSection = ({
 
       <div className="grid! grid-cols-1! gap-4! p-4! sm:grid-cols-[180px_minmax(0,1fr)]! sm:p-5!">
         <SettingLabel
-          title="Store name"
-          description="Displayed across your store and customer-facing pages."
+          title="Nom de la boutique"
+          description="Affiché sur votre boutique et les pages destinées à vos clients."
         />
 
         <Field
           id="settings-store-name"
-          label="Store name"
+          label="Nom de la boutique"
           value={storeName}
-          placeholder="Apex Digital"
+          placeholder="Nom de votre boutique"
           onChange={
             onStoreNameChange
           }
@@ -1274,13 +1274,13 @@ const StoreSection = ({
 
       <div className="grid! grid-cols-1! gap-4! p-4! sm:grid-cols-[180px_minmax(0,1fr)]! sm:p-5!">
         <SettingLabel
-          title="Support phone"
+          title="Téléphone d’assistance"
           description="Main contact number for customer support."
         />
 
         <Field
           id="settings-support-phone"
-          label="Phone"
+          label="Téléphone"
           value={phone}
           placeholder="+228 90 00 00 00"
           type="tel"
@@ -1292,7 +1292,7 @@ const StoreSection = ({
 
       <div className="grid! grid-cols-1! gap-4! p-4! sm:grid-cols-[180px_minmax(0,1fr)]! sm:p-5!">
         <SettingLabel
-          title="Timezone"
+          title="Fuseau horaire"
           description="Used for local order and activity timestamps."
         />
 
@@ -1374,11 +1374,11 @@ const NotificationsSection = ({
 
           <div className="min-w-0!">
             <p className="text-[11px]! font-semibold! text-gray-900! sm:text-xs!">
-              New orders
+              Nouvelles commandes
             </p>
 
             <p className="mt-0.5! max-w-xl! text-[9px]! font-medium! leading-relaxed! text-gray-500! sm:text-[10px]!">
-              Get notified whenever a new order is placed.
+              Recevez une notification à chaque nouvelle commande.
             </p>
           </div>
         </div>
@@ -1387,7 +1387,7 @@ const NotificationsSection = ({
           type="button"
           role="switch"
           aria-checked={enabled}
-          aria-label="Toggle new order notifications"
+          aria-label="Activer ou désactiver les notifications de nouvelles commandes"
           onClick={onToggle}
           className={`
             relative!
@@ -1494,17 +1494,17 @@ const SecuritySection = ({
 
           <div className="min-w-0!">
             <p className="text-[11px]! font-semibold! text-gray-900! sm:text-xs!">
-              Current session
+              Session actuelle
             </p>
 
             <p className="mt-0.5! max-w-lg! break-all! text-[9px]! font-medium! text-gray-500! sm:text-[10px]!">
-              {email || "Authenticated user"}
+              {email ||               "Utilisateur authentifié"}
             </p>
           </div>
         </div>
 
         <span className="shrink-0! text-[9px]! font-semibold! text-gray-400!">
-          Current
+          Actuelle
         </span>
       </div>
 
@@ -1547,7 +1547,7 @@ const SecuritySection = ({
             </p>
 
             <p className="mt-0.5! text-[9px]! font-medium! leading-relaxed! text-gray-500! sm:text-[10px]!">
-              End the current session on this device.
+              End the               Session actuelle on this device.
             </p>
           </div>
         </div>
@@ -1770,7 +1770,7 @@ const LogoutModal = ({
             <button
               type="button"
               onClick={onClose}
-              aria-label="Close"
+              aria-label="Fermer"
               className="
                 flex!
                 h-7!

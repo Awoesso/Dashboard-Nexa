@@ -22,14 +22,14 @@ export const dashboardConfig: DashboardConfig<
     },
     {
       id: "downloads",
-      label: " Total Orders",
+      label: "Commandes totales",
       value: 284,
       change: 18,
     period:""
     },
     {
       id: "products",
-      label: "Products",
+      label: "Produits",
       value: 12,
       change: 9,
     period:""

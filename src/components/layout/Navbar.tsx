@@ -64,7 +64,7 @@ const UserMenuPill = ({
 
       <button
         type="button"
-        aria-label="Open user menu"
+        aria-label="Ouvrir le menu du compte"
         aria-expanded={open}
         onClick={() =>
           setOpen((prev) => !prev)
@@ -173,7 +173,7 @@ const UserMenuPill = ({
               className="shrink-0! text-gray-500!"
             />
 
-            <span>Profile</span>
+            <span>Profil</span>
           </button>
 
           {/* Settings */}
@@ -205,7 +205,7 @@ const UserMenuPill = ({
               className="shrink-0! text-gray-500!"
             />
 
-            <span>Settings</span>
+            <span>Paramètres</span>
           </Link>
 
           <div className="my-1! h-px! bg-gray-100!" />
@@ -238,7 +238,7 @@ const UserMenuPill = ({
               className="shrink-0!"
             />
 
-            <span>Logout</span>
+            <span>Se déconnecter</span>
           </button>
         </div>
       )}
@@ -286,7 +286,7 @@ const Navbar = ({
        <button
   type="button"
   onClick={onMenuClick}
-  aria-label="Open navigation menu"
+  aria-label="Ouvrir le menu de navigation"
   className="
     group
     flex!
@@ -337,7 +337,7 @@ const Navbar = ({
             sm:text-xl!
           "
         >
-          Dashboard
+          Tableau de bord
         </h1>
       </div>
 
@@ -398,7 +398,7 @@ const Navbar = ({
                 strokeWidth={2}
               />
     
-              <span className="hidden sm:inline">Add product</span>
+              <span className="hidden sm:inline">Ajouter un produit</span>
             </Link>
       </div>
     </header>

@@ -124,7 +124,7 @@ const SecuritySettings = () => {
             <AccountSecurityActions />
 
           {/* =================================================
-              CURRENT SESSION
+              Session actuelle
           ================================================= */}
 
           <div className="flex! min-w-0! items-center! justify-between! gap-4! py-5!">
@@ -138,7 +138,7 @@ const SecuritySettings = () => {
 
               <div className="min-w-0!">
                 <p className="text-[11px]! font-semibold! text-gray-900! sm:text-xs!">
-                  Current session
+                  Session actuelle
                 </p>
 
                 <p className="mt-0.5! max-w-full! truncate! text-[9px]! leading-4! text-gray-500! sm:text-[10px]!">
@@ -149,7 +149,7 @@ const SecuritySettings = () => {
             </div>
 
             <span className="shrink-0! text-[9px]! font-medium! text-gray-400!">
-              Current
+              Actuelle
             </span>
           </div>
 
@@ -192,7 +192,7 @@ const SecuritySettings = () => {
                 </p>
 
                 <p className="mt-0.5! text-[9px]! leading-4! text-gray-500! sm:text-[10px]!">
-                  End your current Orion session
+                  End your                   Actuelle Orion session
                   on this device.
                 </p>
               </div>
@@ -321,7 +321,7 @@ const SecuritySettings = () => {
                   onClick={() =>
                     setShowLogoutModal(false)
                   }
-                  aria-label="Close"
+                  aria-label="Fermer"
                   className="
                     flex!
                     h-7!

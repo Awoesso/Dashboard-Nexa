@@ -65,7 +65,7 @@ const ProductHeader = ({
               <h1
             className="font-heading text-lg! font-semibold tracking-tight text-gray-800 sm:text-xl!"
               >
-                New product
+                Nouveau produit
               </h1>
 
             
@@ -74,7 +74,7 @@ const ProductHeader = ({
             <p
               
             >
-              Create and configure your product.
+              Créez et configurez votre produit.
             </p>
           </div>
         </div>
@@ -107,7 +107,7 @@ const ProductHeader = ({
               sm:inline-flex!
             "
           >
-            Cancel
+            Annuler
           </Link>
 
       

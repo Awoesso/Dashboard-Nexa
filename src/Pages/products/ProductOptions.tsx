@@ -75,11 +75,11 @@ const ProductOptions = ({
 
           <div className="min-w-0!">
             <h2 className="text-[14px]! font-semibold! tracking-tight! text-gray-900! sm:text-[15px]!">
-              Options
+              Déclinaisons
             </h2>
 
             <p className="mt-0.5! text-[10px]! font-medium! leading-relaxed! text-gray-500! sm:text-[11px]!">
-              Add variants such as color, size or format.
+              Ajoutez des variantes, comme la couleur, la taille ou le format.
             </p>
           </div>
         </div>
@@ -154,7 +154,7 @@ const ProductOptions = ({
           {/* OPTION NAME */}
           <div>
             <label className="mb-1.5! block! text-[11px]! font-semibold! text-gray-700! sm:text-[12px]!">
-              Option name
+              Nom de la déclinaison
             </label>
 
             <input
@@ -166,7 +166,7 @@ const ProductOptions = ({
                   event.target.value,
                 )
               }
-              placeholder="Color"
+              placeholder="Couleur"
               className="
                 h-10!
                 w-full!

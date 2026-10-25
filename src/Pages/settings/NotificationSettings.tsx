@@ -99,7 +99,7 @@ const NotificationSettings = () => {
         </div>
 
         <p className="mt-1! max-w-xl! text-[10px]! font-medium! leading-relaxed! text-gray-500! sm:text-[11px]!">
-          Choose which activities should generate notifications.
+          Choisissez les activités pour lesquelles vous souhaitez recevoir des notifications.
         </p>
       </div>
 
@@ -115,8 +115,8 @@ const NotificationSettings = () => {
               strokeWidth={1.8}
             />
           }
-          title="New orders"
-          description="Receive notifications whenever a new order is placed."
+          title="Nouvelles commandes"
+          description="Recevez une notification à chaque nouvelle commande."
           checked={settings.orders}
           onChange={() =>
             updateSetting("orders")
@@ -130,8 +130,8 @@ const NotificationSettings = () => {
               strokeWidth={1.8}
             />
           }
-          title="Payments"
-          description="Get alerts for successful or failed payments."
+          title="Paiements"
+          description="Recevez une alerte lorsque le paiement d’une commande aboutit ou échoue."
           checked={settings.payments}
           onChange={() =>
             updateSetting("payments")
@@ -145,8 +145,8 @@ const NotificationSettings = () => {
               strokeWidth={1.8}
             />
           }
-          title="Product activity"
-          description="Receive updates about important product activity."
+          title="Activité des produits"
+          description="Recevez des informations sur les changements importants concernant vos produits."
           checked={settings.products}
           onChange={() =>
             updateSetting("products")
@@ -160,8 +160,8 @@ const NotificationSettings = () => {
               strokeWidth={1.8}
             />
           }
-          title="Security alerts"
-          description="Important notifications about your account and security."
+          title="Alertes de sécurité"
+          description="Recevez les notifications importantes concernant votre compte et sa sécurité."
           checked={settings.security}
           onChange={() =>
             updateSetting("security")
@@ -176,14 +176,14 @@ const NotificationSettings = () => {
           </div>
           <div className="min-w-0!">
             <p className="text-[11px]! font-semibold! text-gray-900! sm:text-xs!">
-              Browser push notifications
+              Notifications push du navigateur
             </p>
             <p className="mt-0.5! max-w-xl! text-[9px]! font-medium! leading-relaxed! text-gray-500! sm:text-[10px]!">
               {permission === "denied"
-                ? "Notifications are blocked in your browser settings."
+                ? "Les notifications sont bloquées dans les paramètres de votre navigateur."
                 : enabled
-                  ? "Push notifications are enabled for this browser."
-                  : "Allow this browser to send you push notifications."}
+                  ? "Les notifications push sont activées pour ce navigateur."
+                  : "Autorisez ce navigateur à vous envoyer des notifications push."}
             </p>
           </div>
         </div>
@@ -191,7 +191,7 @@ const NotificationSettings = () => {
           type="button"
           role="switch"
           aria-checked={enabled}
-          aria-label="Browser push notifications"
+          aria-label="Notifications push du navigateur"
           onClick={() => void (enabled ? disable() : enable())}
           disabled={!supported || permission === "denied" || pushLoading}
           className={`

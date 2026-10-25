@@ -105,7 +105,7 @@ const ProductPricing = ({
             sm:text-[11px]!
           "
         >
-          Set the selling price of your product.
+          Définissez le prix de vente de votre produit.
         </p>
       </div>
 
@@ -117,7 +117,7 @@ const ProductPricing = ({
 
           <PriceField
             id="product-price"
-            label="Price"
+            label="Prix"
             value={form.price}
             placeholder="0"
             error={errors.price}

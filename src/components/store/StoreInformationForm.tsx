@@ -14,7 +14,7 @@ const StoreInformationForm = ({ values, errors, saving, message, onChange, onSav
   <section id="store-section-information" className="scroll-mt-5 rounded-2xl! border! border-gray-200! bg-white! p-4 sm:p-5!">
     <div className="mb-5">
       <h2 className="font-heading! text-[14px]! font-semibold! text-gray-900!">Informations de la boutique</h2>
-      <p className="mt-1 text-[11px]! text-gray-500!">Ces champs sont enregistrés dans votre boutique Supabase.</p>
+      <p className="mt-1 text-[11px]! text-gray-500!">Ces informations seront utilisées pour présenter votre boutique.</p>
     </div>
     <div className="grid gap-4 sm:grid-cols-2">
       <Field label="Nom de la boutique" error={errors.name}>
@@ -38,7 +38,7 @@ const StoreInformationForm = ({ values, errors, saving, message, onChange, onSav
       </Field>
       <Field label="Langue">
         <select value={values.language} onChange={(event) => onChange("language", event.target.value)} className={inputClass(false)}>
-          <option value="French">Français</option><option value="English">English</option>
+          <option value="French">Français</option><option value="English">Anglais</option>
         </select>
       </Field>
       <Field label="Fuseau horaire">
@@ -48,7 +48,7 @@ const StoreInformationForm = ({ values, errors, saving, message, onChange, onSav
       </Field>
     </div>
     <p className="mt-4 rounded-lg! bg-gray-50! px-3 py-2 text-[11px]! leading-5! text-gray-600!">
-      Le schéma local ne contient pas de colonne description pour `stores`. L’ajout de ce champ nécessite une évolution de schéma avant toute sauvegarde.
+      La description de la boutique n’est pas encore disponible.
     </p>
     <div className="mt-4 flex min-h-9 items-center justify-between gap-3">
       <p className="text-[11px]! text-emerald-700!" role="status">{message}</p>

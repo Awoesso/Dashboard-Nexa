@@ -14,7 +14,7 @@ type SettingsTabsProps = {
 const tabs = [
   {
     id: "general" as SettingsTab,
-    label: "General",
+    label: "Général",
     icon: User,
   },
   {
@@ -24,7 +24,7 @@ const tabs = [
   },
   {
     id: "security" as SettingsTab,
-    label: "Security",
+    label: "Sécurité",
     icon: Shield,
   },
 ];
@@ -37,7 +37,7 @@ const SettingsTabs = ({
     <div className="w-full! overflow-x-auto! mb-3 border-b! border-gray-200!">
       <nav
         className="flex! min-w-max! items-center! gap-5! sm:gap-6!"
-        aria-label="Settings navigation"
+        aria-label="Navigation des paramètres"
       >
         {tabs.map((tab) => {
           const Icon = tab.icon;

@@ -18,10 +18,10 @@ const ForgotPassword = () => {
       if (result.success) {
         setSubmitted(true);
       } else {
-        setError("Impossible d’envoyer les instructions. Réessaie dans quelques instants.");
+        setError("Nous ne pouvons pas envoyer les instructions pour le moment. Veuillez réessayer dans quelques instants.");
       }
     } catch {
-      setError("Impossible d’envoyer les instructions. Réessaie dans quelques instants.");
+      setError("Nous ne pouvons pas envoyer les instructions pour le moment. Veuillez réessayer dans quelques instants.");
     } finally {
       setIsSubmitting(false);
     }
@@ -31,7 +31,7 @@ const ForgotPassword = () => {
     <main className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-8">
       <section className="w-full max-w-md">
         <h1 className="text-2xl font-semibold text-gray-900">Mot de passe oublié</h1>
-        <p className="mt-2 text-sm text-gray-600">Saisis ton adresse e-mail pour recevoir les instructions de récupération.</p>
+        <p className="mt-2 text-sm text-gray-600">Veuillez saisir votre adresse e-mail pour recevoir les instructions de réinitialisation.</p>
         {error && <p role="alert" className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">{error}</p>}
         {submitted ? (
           <p role="status" className="mt-6 rounded-lg border border-green-200 bg-green-50 p-4 text-sm text-green-800">

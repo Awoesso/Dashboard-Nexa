@@ -45,11 +45,11 @@ const MarketplaceFilters = ({
       <div className="flex! items-center! justify-between!">
         <div>
           <p className="text-[11px]! font-semibold! text-gray-900!">
-            Filters
+            Filtres
           </p>
 
           <p className="mt-0.5! text-[9px]! text-gray-500!">
-            Refine your products.
+            Affinez la liste de vos produits.
           </p>
         </div>
 
@@ -66,7 +66,7 @@ const MarketplaceFilters = ({
               hover:text-gray-900!
             "
           >
-            Clear all
+            Tout effacer
           </button>
         )}
       </div>
@@ -74,15 +74,15 @@ const MarketplaceFilters = ({
       {/* Category */}
 
       <FilterGroup
-        label="Category"
+        label="Catégorie"
         value={filters.category}
         options={[
-          ["all", "All categories"],
-          ["electronics", "Electronics"],
-          ["fashion", "Fashion"],
-          ["beauty", "Beauty"],
-          ["home", "Home"],
-          ["other", "Other"],
+          ["all", "Toutes les catégories"],
+          ["electronics", "Électronique"],
+          ["fashion", "Mode"],
+          ["beauty", "Beauté"],
+          ["home", "Maison"],
+          ["other", "Autre"],
         ]}
         onChange={(value) =>
           updateFilter("category", value)
@@ -92,12 +92,12 @@ const MarketplaceFilters = ({
       {/* Product type */}
 
       <FilterGroup
-        label="Product type"
+        label="Type de produit"
         value={filters.productType}
         options={[
-          ["all", "All products"],
-          ["physical", "Physical"],
-          ["digital", "Digital"],
+          ["all", "Tous les produits"],
+          ["physical", "Physique"],
+          ["digital", "Numérique"],
         ]}
         onChange={(value) =>
           updateFilter("productType", value)
@@ -107,13 +107,13 @@ const MarketplaceFilters = ({
       {/* Status */}
 
       <FilterGroup
-        label="Status"
+        label="Statut"
         value={filters.status}
         options={[
-          ["all", "All statuses"],
-          ["published", "Published"],
-          ["draft", "Draft"],
-          ["archived", "Archived"],
+          ["all", "Tous les statuts"],
+          ["published", "Publié"],
+          ["draft", "Brouillon"],
+          ["archived", "Archivé"],
         ]}
         onChange={(value) =>
           updateFilter("status", value)
@@ -199,7 +199,7 @@ const MarketplaceFilters = ({
                 hover:bg-gray-100!
                 hover:text-gray-700!
               "
-              aria-label="Close filters"
+              aria-label="Fermer les filtres"
             >
               <X size={14} />
             </button>

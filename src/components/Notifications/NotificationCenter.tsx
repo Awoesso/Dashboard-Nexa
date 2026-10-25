@@ -189,7 +189,7 @@ const NotificationCenter = () => {
           bg-gray-50 text-gray-700 transition hover:bg-gray-100 hover:text-gray-900
           focus:outline-none
         "
-        aria-label="Notifications"
+        aria-label="Ouvrir les notifications"
         aria-expanded={isOpen}
       >
         <Bell size={17} />
@@ -216,7 +216,7 @@ const NotificationCenter = () => {
           {/* TOP HEADER */}
           <div className="flex items-center justify-between px-5 pt-4 pb-2">
             <h3 className="text-base font-semibold text-gray-900">
-              Notification
+              Notifications
             </h3>
 
             {unreadCount > 0 && (

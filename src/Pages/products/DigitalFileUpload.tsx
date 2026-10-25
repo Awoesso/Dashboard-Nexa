@@ -65,11 +65,11 @@ const DigitalFileUpload = ({
 
         <div className="min-w-0!">
           <h2 className="font-heading! text-[14px]! font-semibold! tracking-tight! text-gray-900! sm:text-[15px]!">
-            Digital file
+            Fichier numérique
           </h2>
 
           <p className="mt-0.5! truncate! text-[10px]! font-medium! text-gray-500! sm:text-[11px]!">
-            File delivered to the customer.
+            Fichier remis au client après l’achat.
           </p>
         </div>
       </div>
@@ -199,7 +199,7 @@ const DigitalFileUpload = ({
           <button
             type="button"
             onClick={() => onChange(null)}
-            aria-label="Remove file"
+            aria-label="Retirer le fichier"
             className="
               flex!
               h-8!

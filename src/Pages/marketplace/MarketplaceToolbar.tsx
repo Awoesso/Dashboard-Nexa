@@ -80,7 +80,7 @@ const MarketplaceToolbar = ({
             )
           }
        
-                placeholder="Search here..."
+                placeholder="Rechercher..."
                 className="
                   h-9!
                   w-[60%]!
@@ -110,7 +110,7 @@ const MarketplaceToolbar = ({
             onClick={() =>
               onSearchChange("")
             }
-            aria-label="Clear search"
+            aria-label="Effacer la recherche"
             className="
               absolute!
               right-2.5!

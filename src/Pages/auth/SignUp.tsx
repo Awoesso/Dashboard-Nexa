@@ -86,20 +86,20 @@ const SignUp = () => {
     // VÉRIFICATION DES CHAMPS
     // =========================
 
-    if (!firstName.trim()) nextErrors.firstName = "Renseigne ton prénom.";
-    if (!lastName.trim()) nextErrors.lastName = "Renseigne ton nom.";
+    if (!firstName.trim()) nextErrors.firstName = "Veuillez saisir votre prénom.";
+    if (!lastName.trim()) nextErrors.lastName = "Veuillez saisir votre nom.";
     if (!email.trim()) {
-      nextErrors.email = "Saisis une adresse e-mail pour recevoir ton code de confirmation.";
+      nextErrors.email = "Veuillez saisir une adresse e-mail pour recevoir votre code de confirmation.";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
-      nextErrors.email = "Vérifie le format de ton adresse e-mail.";
+      nextErrors.email = "Veuillez vérifier le format de votre adresse e-mail.";
     }
     if (!password) {
-      nextErrors.password = "Choisis un mot de passe pour sécuriser ton compte.";
+      nextErrors.password = "Veuillez choisir un mot de passe pour sécuriser votre compte.";
     } else if (!isStrongPassword(password)) {
       nextErrors.password = passwordPolicyMessage;
     }
     if (!confirmPassword) {
-      nextErrors.confirmPassword = "Saisis à nouveau ton mot de passe.";
+      nextErrors.confirmPassword = "Veuillez saisir à nouveau votre mot de passe.";
     } else if (password !== confirmPassword) {
       nextErrors.confirmPassword = "Les deux mots de passe ne correspondent pas.";
     }
@@ -134,8 +134,9 @@ const SignUp = () => {
       if (!result?.success) {
         setError({
           title: "Création du compte impossible",
-          message:
-            "Vérifie les informations saisies et réessaie. Si le problème persiste, patiente quelques instants avant une nouvelle tentative.",
+          message: result?.error
+            ? `Supabase : ${result.error}`
+            : "Nous ne pouvons pas créer votre compte pour le moment. Veuillez réessayer dans quelques instants.",
         });
         return;
       }
@@ -160,10 +161,12 @@ const SignUp = () => {
         password: "",
         confirmPassword: "",
       });
-    } catch {
+    } catch (error) {
       setError({
         title: "Un problème est survenu",
-        message: "Ton compte n’a pas pu être créé. Réessaie dans quelques instants.",
+        message: error instanceof Error
+          ? error.message
+          : "Votre compte n’a pas pu être créé. Veuillez réessayer dans quelques instants.",
       });
     } finally {
       setLoading(false);
@@ -183,13 +186,15 @@ const SignUp = () => {
       } else {
         setError({
           title: "Code non validé",
-          message: "Vérifie les 6 chiffres saisis. Le code peut avoir expiré ; tu peux en demander un nouveau.",
+          message: result.error ?? "Veuillez vérifier les 6 chiffres saisis. Le code a peut-être expiré ; vous pouvez en demander un nouveau.",
         });
       }
-    } catch {
+    } catch (error) {
       setError({
         title: "Vérification indisponible",
-        message: "Nous n’avons pas pu vérifier le code. Réessaie dans quelques instants.",
+        message: error instanceof Error
+          ? error.message
+          : "Nous ne pouvons pas vérifier le code pour le moment. Veuillez réessayer dans quelques instants.",
       });
     } finally {
       setLoading(false);
@@ -205,15 +210,17 @@ const SignUp = () => {
       if (!result.success) {
         setError({
           title: "Envoi du code impossible",
-          message: "Un code récent a peut-être déjà été envoyé. Attends un instant puis réessaie.",
+          message: result.error ?? "Nous ne pouvons pas envoyer le code pour le moment. Veuillez réessayer dans quelques instants.",
         });
       } else {
-        setNotice("Un nouveau code vient d’être envoyé. Pense aussi à vérifier tes courriers indésirables.");
+        setNotice("Un nouveau code vient de vous être envoyé. Pensez également à vérifier votre dossier de courriers indésirables.");
       }
-    } catch {
+    } catch (error) {
       setError({
         title: "Envoi du code impossible",
-        message: "Nous n’avons pas pu envoyer le code. Réessaie dans quelques instants.",
+        message: error instanceof Error
+          ? error.message
+          : "Nous ne pouvons pas envoyer le code pour le moment. Veuillez réessayer dans quelques instants.",
       });
     } finally {
       setLoading(false);
@@ -228,13 +235,13 @@ const SignUp = () => {
       if (!result.success) {
         setError({
           title: "Inscription Google indisponible",
-          message: "Réessaie dans quelques instants ou crée ton compte avec ton adresse e-mail.",
+          message: "Veuillez réessayer dans quelques instants ou créer votre compte avec votre adresse e-mail.",
         });
       }
     } catch {
       setError({
         title: "Inscription Google indisponible",
-        message: "Réessaie dans quelques instants ou crée ton compte avec ton adresse e-mail.",
+        message: "Veuillez réessayer dans quelques instants ou créer votre compte avec votre adresse e-mail.",
       });
     } finally {
       setLoading(false);
@@ -260,11 +267,11 @@ const SignUp = () => {
 
           <div className="mb-6 text-center sm:mb-7">
             <h1 className="text-[22px]! font-semibold tracking-tight text-gray-900 sm:text-[24px]!">
-              Vérifie ton adresse e-mail
+              Vérifiez votre adresse e-mail
             </h1>
 
             <p className="mx-auto mt-2 max-w-85 text-[12px]! leading-5 text-gray-500 sm:text-[13px]!">
-              Saisis le code à 6 chiffres envoyé à ton adresse e-mail.
+              Veuillez saisir le code à 6 chiffres envoyé à votre adresse e-mail.
             </p>
           </div>
 
@@ -290,7 +297,7 @@ const SignUp = () => {
             <div className="mt-5 text-center">
 
               <h2 className="text-[15px]! font-semibold text-gray-900">
-                Confirme ton adresse
+                Confirmez votre adresse
               </h2>
 
               <p className="mx-auto mt-2 max-w-82.5 text-[11px]! leading-5 text-gray-500 sm:text-[12px]!">
@@ -302,7 +309,7 @@ const SignUp = () => {
               </p>
 
               <p className="mx-auto mt-3 max-w-82.5 text-[10px]! leading-5 text-gray-400 sm:text-[11px]!">
-                Saisis le code reçu pour confirmer ton adresse et accéder à ton compte.
+                Veuillez saisir le code reçu pour confirmer votre adresse et accéder à votre compte.
               </p>
 
             </div>
@@ -367,8 +374,8 @@ const SignUp = () => {
           {/* ================= FOOTER ================= */}
 
           <p className="mx-auto mt-4 max-w-90 text-center text-[9px]! leading-4 text-gray-400 sm:mt-5 sm:text-[10px]!">
-            Si vous ne trouvez pas l'email, vérifiez
-            également votre dossier spam.
+            Si vous ne trouvez pas l’e-mail, veuillez également vérifier
+            votre dossier de courriers indésirables.
           </p>
 
         </div>
@@ -447,7 +454,7 @@ const SignUp = () => {
                   type="text"
                   value={formData.firstName}
                   onChange={handleChange}
-                  placeholder="John"
+                  placeholder="Marie"
                   autoComplete="given-name"
                   required
                   aria-invalid={Boolean(fieldErrors.firstName)}
@@ -492,7 +499,7 @@ const SignUp = () => {
                   type="text"
                   value={formData.lastName}
                   onChange={handleChange}
-                  placeholder="Aneme"
+                  placeholder="Dupont"
                   autoComplete="family-name"
                   required
                   aria-invalid={Boolean(fieldErrors.lastName)}
@@ -530,7 +537,7 @@ const SignUp = () => {
                 htmlFor="email"
                 className="mb-1.5 block text-[11px]! font-medium text-gray-800 sm:text-[12px]!"
               >
-                Email
+                Adresse e-mail
               </label>
 
               <input

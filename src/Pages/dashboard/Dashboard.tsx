@@ -1,4 +1,5 @@
-import { lazy, Suspense, useState, useMemo } from "react";
+import { lazy, Suspense, useState } from "react";
+import { RotateCw } from "lucide-react";
 import { useDashboard } from "@/hooks/useDashboard";
 import GlobalStatCard from "./GlobalStatCard";
 import DocPerformance from "./DOCPERFORMANCE";
@@ -18,28 +19,26 @@ interface WelcomeMessage {
 
 const WELCOME_MESSAGES: WelcomeMessage[] = [
   {
-    title: "Welcome back",
-    subtitle: "Your academic work is now a digital asset.",
+    title: "Ravi de vous retrouver",
+    subtitle: "Votre activité et vos produits sont réunis dans votre espace.",
   },
   {
-    title: "Ready to scale your earnings?",
-    subtitle: "Check your stats and upload new study materials.",
+    title: "Et si vous faisiez grandir votre activité ?",
+    subtitle: "Consultez vos statistiques et ajoutez de nouveaux produits.",
   },
   {
-    title: "Good to see you",
-    subtitle: "Turn your revision notes into passive income.",
+    title: "Bienvenue dans votre espace",
+    subtitle: "Suivez votre activité et gérez votre boutique en toute simplicité.",
   },
 ];
 
 // ================= DASHBOARD =================
 
 const Dashboard = () => {
-  const [messageIndex] = useState<number>(0);
-
-  const currentMessage = useMemo(
-    () => WELCOME_MESSAGES[messageIndex],
-    [messageIndex]
+  const [messageIndex, setMessageIndex] = useState(
+    () => Math.floor(Math.random() * WELCOME_MESSAGES.length),
   );
+  const currentMessage = WELCOME_MESSAGES[messageIndex];
 
   const {
     profile,
@@ -238,18 +237,34 @@ const Dashboard = () => {
 
   // ================= MAIN RENDER =================
 
-  const firstName = profile?.first_name || "there";
+  const firstName = profile?.first_name?.trim();
 
   return (
     <div className="min-h-screen bg-[#fafafa] px-3 py-4 sm:px-4 sm:py-5 lg:px-6 lg:py-6">
       {/* Header */}
       <section>
         <h1 className="font-heading text-lg font-semibold tracking-tight text-gray-800 sm:text-xl">
-          {currentMessage.title}, {firstName} 👋
+          {firstName ? `Bonjour, ${firstName} !` : "Bienvenue !"}
         </h1>
-        <p className="mt-1 text-[11px] leading-5 text-gray-500 sm:text-sm">
-          {currentMessage.subtitle}
-        </p>
+        <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1">
+          <p className="text-[11px] font-medium text-gray-700 sm:text-sm">
+            {currentMessage.title}
+          </p>
+          <p className="text-[11px] leading-5 text-gray-500 sm:text-sm">
+            {currentMessage.subtitle}
+          </p>
+          <button
+            type="button"
+            onClick={() =>
+              setMessageIndex((index) => (index + 1) % WELCOME_MESSAGES.length)
+            }
+            aria-label="Afficher un autre message de bienvenue"
+            className="inline-flex items-center gap-1 rounded-full px-2 py-1 text-[10px] font-medium text-blue-700 transition-colors hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+          >
+            <RotateCw size={12} />
+            Changer
+          </button>
+        </div>
       </section>
 
       {/* Grid */}
@@ -263,7 +278,7 @@ const Dashboard = () => {
                   <span className="text-[10px]">✦</span>
                 </div>
                 <span className="truncate text-[11px] font-semibold text-gray-900 sm:text-xs">
-                  Your Creator Snapshot
+                  Résumé de votre activité
                 </span>
               </div>
 

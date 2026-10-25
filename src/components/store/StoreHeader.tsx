@@ -30,14 +30,14 @@ const StoreHeader = ({
       </div>
       {status && (
         <span className={`shrink-0 rounded-full px-2.5 py-1 text-[10px]! font-medium! ${status === "active" ? "bg-emerald-50! text-emerald-700!" : "bg-gray-100! text-gray-600!"}`}>
-          {status === "active" ? "Active" : "Inactive"}
+          {status === "active" ? "Activée" : "Désactivée"}
         </span>
       )}
     </div>
     <div className="flex flex-wrap items-center gap-2">
       <CustomizeButton storeSlug={slug} />
       <button type="button" onClick={onPublish} disabled={saving} className="inline-flex h-9 items-center gap-2 rounded-full! bg-blue-600! px-3 text-[11px]! font-semibold! text-white! hover:bg-blue-700! disabled:opacity-50!">
-        <ExternalLink size={14} /> {status === "active" ? "Gérer publication" : "Publier"}
+        <ExternalLink size={14} /> {status === "active" ? "Gérer la publication" : "Publier la boutique"}
       </button>
       <button type="button" onClick={onSave} disabled={saving} className="inline-flex h-9 items-center gap-2 rounded-full! border! border-gray-200! bg-white! px-3 text-[11px]! font-semibold! text-gray-900! hover:bg-gray-50! disabled:opacity-50!">
         <Save size={14} /> {saving ? "Enregistrement..." : "Enregistrer"}

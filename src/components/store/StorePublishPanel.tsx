@@ -24,7 +24,7 @@ const StorePublishPanel = ({ store, name, slug, publishedCount, saving, error, m
     <section id="store-section-publication" className="scroll-mt-5 p-4 sm:p-5!">
       <div className="flex items-start gap-3">
         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-700"><Globe2 size={17} /></div>
-        <div><h2 className="font-heading! text-[14px]! font-semibold! text-gray-900!">Publication</h2><p className="mt-1 text-[11px]! leading-5! text-gray-500!">Le statut active/inactive est enregistré dans `stores`. La route publique et le domaine de vitrine ne sont pas configurés dans l’application actuelle.</p></div>
+        <div><h2 className="font-heading! text-[14px]! font-semibold! text-gray-900!">Publication</h2><p className="mt-1 text-[11px]! leading-5! text-gray-500!">Vous pouvez préparer votre boutique et son catalogue. La mise en ligne publique n’est pas encore disponible.</p></div>
       </div>
       <ul className="mt-4 space-y-2 border-y! border-gray-100! py-4">
         {checks.map(({ label, complete }) => (
@@ -36,7 +36,7 @@ const StorePublishPanel = ({ store, name, slug, publishedCount, saving, error, m
       </ul>
       {(error || message) && <p role={error ? "alert" : "status"} className={`mt-3 text-[11px]! ${error ? "text-red-700!" : "text-emerald-700!"}`}>{error || message}</p>}
       <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-        <span className="text-[11px]! text-gray-500!">Statut : {active ? "Active" : "Inactive"}</span>
+        <span className="text-[11px]! text-gray-500!">Statut : {active ? "Activée" : "Désactivée"}</span>
         <button
           type="button"
           disabled={saving || (!active && (!store || checks.some((check) => !check.complete)))}

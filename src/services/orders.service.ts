@@ -323,8 +323,7 @@ export function subscribeToOrders(
 /* -------------------------------------------------------------------------- */
 
 export interface WalletSummary {
-  balance: number;
-  currency: string;
+  balances: { currency: string; amount: number }[];
   lastActivity: string | null;
 }
 
@@ -360,21 +359,25 @@ export async function getWalletSummary(): Promise<WalletSummary> {
       order.order_status !== "cancelled"
   );
 
-  const balance = validPaidOrders.reduce(
-    (total, order) => total + Number(order.store_total || 0),
-    0
-  );
-
-  const currency =
-    validPaidOrders[0]?.store_currency ??
-    orders[0]?.store_currency ??
-    "XOF";
+  const balancesByCurrency = new Map<string, number>();
+  for (const order of validPaidOrders) {
+    const currency = order.store_currency || "XOF";
+    const amount = Number(order.store_total || 0);
+    if (Number.isFinite(amount)) {
+      balancesByCurrency.set(
+        currency,
+        (balancesByCurrency.get(currency) ?? 0) + amount,
+      );
+    }
+  }
 
   const lastActivity = orders[0]?.store_order_created_at ?? null;
 
   return {
-    balance,
-    currency,
+    balances: [...balancesByCurrency].map(([currency, amount]) => ({
+      currency,
+      amount,
+    })),
     lastActivity,
   };
 }

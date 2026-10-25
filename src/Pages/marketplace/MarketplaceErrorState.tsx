@@ -9,7 +9,7 @@ type MarketplaceErrorStateProps = {
 };
 
 const MarketplaceErrorState = ({
-  message = "Unable to load your products.",
+  message = "Nous ne pouvons pas charger vos produits pour le moment.",
   onRetry,
 }: MarketplaceErrorStateProps) => {
   return (
@@ -56,7 +56,7 @@ const MarketplaceErrorState = ({
             text-gray-900!
           "
         >
-          Something went wrong
+          Une erreur est survenue
         </h3>
 
         <p
@@ -103,7 +103,7 @@ const MarketplaceErrorState = ({
               strokeWidth={1.9}
             />
 
-            Try again
+            Réessayer
           </button>
         )}
       </div>

@@ -3,10 +3,10 @@ const LeaderboardHeader = () => {
     <section >
    
       <div className="mb-6!">
-   <h1>Leaderboard                                                 </h1>
+   <h1>Classement des commandes</h1>
 
         <p className="mt-1 text-[11px]! leading-5 text-gray-500 sm:text-sm!">
-Keep track of your shop's activity and stay in         
+Suivez l’activité de votre boutique et consultez vos commandes récentes.
         </p>
       </div>
 

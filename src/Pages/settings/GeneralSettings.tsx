@@ -89,21 +89,21 @@ const GeneralSettings = () => {
   const handleSave = async () => {
     if (!session?.user?.id) {
       setSaveError(
-        "Your session could not be found.",
+        "Votre session est introuvable.",
       );
       return;
     }
 
     if (!firstName.trim()) {
       setSaveError(
-        "First name is required.",
+        "Veuillez renseigner votre prénom.",
       );
       return;
     }
 
     if (!lastName.trim()) {
       setSaveError(
-        "Last name is required.",
+        "Veuillez renseigner votre nom.",
       );
       return;
     }
@@ -145,7 +145,7 @@ const GeneralSettings = () => {
       setSaveError(
         err instanceof Error
           ? err.message
-          : "Unable to save changes.",
+          : "Nous ne pouvons pas enregistrer les modifications pour le moment.",
       );
     } finally {
       setIsSaving(false);
@@ -171,7 +171,7 @@ const GeneralSettings = () => {
 
     if (!file.type.startsWith("image/")) {
       setSaveError(
-        "Please select a valid image.",
+        "Veuillez sélectionner une image valide.",
       );
 
       event.target.value = "";
@@ -197,7 +197,7 @@ const GeneralSettings = () => {
 
     reader.onerror = () => {
       setSaveError(
-        "Unable to read the selected image.",
+        "Nous ne pouvons pas lire l’image sélectionnée.",
       );
 
       setIsUploading(false);
@@ -308,12 +308,11 @@ const GeneralSettings = () => {
 
       <div className="mb-6!">
         <h2 className="font-heading! text-sm! font-semibold! tracking-tight! text-gray-900! sm:text-[15px]!">
-          Personal information
+          Informations personnelles
         </h2>
 
         <p className="mt-1! max-w-xl! text-[10px]! leading-5! text-gray-500! sm:text-[11px]!">
-          Update the information associated with
-          your account.
+          Mettez à jour les informations associées à votre compte.
         </p>
       </div>
 
@@ -329,11 +328,11 @@ const GeneralSettings = () => {
         <div className="grid! grid-cols-1! gap-4! py-5! sm:grid-cols-[180px_minmax(0,1fr)]! sm:gap-6!">
           <div className="min-w-0!">
             <p className="text-[11px]! font-semibold! text-gray-900! sm:text-xs!">
-              Profile photo
+              Photo de profil
             </p>
 
             <p className="mt-1! max-w-[220px]! text-[9px]! leading-4! text-gray-500! sm:text-[10px]!">
-              Add a profile or store image.
+              Ajoutez une image à votre profil ou à votre boutique.
             </p>
           </div>
 
@@ -343,7 +342,7 @@ const GeneralSettings = () => {
                 {avatarUrl ? (
                   <img
                     src={avatarUrl}
-                    alt="Profile"
+                    alt="Photo de profil"
                     className="h-full! w-full! object-cover!"
                   />
                 ) : (
@@ -367,7 +366,7 @@ const GeneralSettings = () => {
 
               <div className="min-w-0!">
                 <p className="text-[10px]! font-medium! text-gray-700!">
-                  JPG, PNG, WEBP or GIF
+                  JPG, PNG, WEBP ou GIF
                 </p>
 
                 <button
@@ -408,7 +407,7 @@ const GeneralSettings = () => {
                     strokeWidth={1.9}
                   />
 
-                  Update photo
+                  Modifier la photo
                 </button>
               </div>
             </div>
@@ -428,7 +427,7 @@ const GeneralSettings = () => {
                 htmlFor="profile-avatar-url"
                 className="mb-1.5! block! text-[10px]! font-semibold! text-gray-700!"
               >
-                Image URL
+                Adresse de l’image
               </label>
 
               <input
@@ -452,12 +451,12 @@ const GeneralSettings = () => {
         =================================================== */}
 
         <SettingsRow
-          title="Full name"
-          description="Your name used across the dashboard."
+          title="Nom complet"
+          description="Le nom affiché dans votre tableau de bord."
         >
           <div className="grid! min-w-0! grid-cols-1! gap-3! sm:grid-cols-2!">
             <Field
-              label="First name"
+              label="Prénom"
               htmlFor="profile-first-name"
             >
               <input
@@ -469,14 +468,14 @@ const GeneralSettings = () => {
                     event.target.value,
                   )
                 }
-                placeholder="First name"
+                placeholder="Prénom"
                 autoComplete="given-name"
                 className={inputClass}
               />
             </Field>
 
             <Field
-              label="Last name"
+              label="Nom"
               htmlFor="profile-last-name"
             >
               <input
@@ -488,7 +487,7 @@ const GeneralSettings = () => {
                     event.target.value,
                   )
                 }
-                placeholder="Last name"
+                placeholder="Nom"
                 autoComplete="family-name"
                 className={inputClass}
               />
@@ -501,8 +500,8 @@ const GeneralSettings = () => {
         =================================================== */}
 
         <SettingsRow
-          title="Email address"
-          description="Used for authentication and account alerts."
+          title="Adresse e-mail"
+          description="Utilisée pour vous connecter et recevoir les alertes de votre compte."
         >
           <div className="relative!">
             <Mail
@@ -528,8 +527,8 @@ const GeneralSettings = () => {
         =================================================== */}
 
         <SettingsRow
-          title="Phone number"
-          description="Main contact number for your account."
+          title="Numéro de téléphone"
+          description="Numéro principal associé à votre compte."
         >
           <input
             id="profile-phone"
@@ -557,7 +556,7 @@ const GeneralSettings = () => {
           />
 
           <p className="text-[10px]! font-semibold! sm:text-[11px]!">
-            Changes saved successfully.
+            Modifications enregistrées.
           </p>
         </div>
       )}
@@ -651,7 +650,7 @@ const GeneralSettings = () => {
                 size={13}
                 className="animate-spin!"
               />
-              Saving...
+              Enregistrement en cours…
             </>
           ) : (
             <>
@@ -659,7 +658,7 @@ const GeneralSettings = () => {
                 size={13}
                 strokeWidth={2.1}
               />
-              Save changes
+              Enregistrer les modifications
             </>
           )}
         </button>
