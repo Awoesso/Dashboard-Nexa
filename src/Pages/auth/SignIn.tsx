@@ -105,7 +105,7 @@ const SignIn = () => {
       }
 
       setError({
-        title: "Un problème est survenu",
+        title: "Un problème est survenu !",
         message: "Nous ne pouvons pas vous connecter pour le moment. Veuillez réessayer dans quelques instants.",
       });
     } finally {
