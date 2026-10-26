@@ -160,7 +160,7 @@ const GeneralSettings = () => {
     avatarInputRef.current?.click();
   };
 
-  const handleAvatarFileChange = (
+  const handleAvatarFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const file = event.target.files?.[0];
@@ -169,42 +169,79 @@ const GeneralSettings = () => {
       return;
     }
 
-    if (!file.type.startsWith("image/")) {
+    const allowedTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/webp",
+      "image/gif",
+    ];
+
+    if (!allowedTypes.includes(file.type)) {
       setSaveError(
-        "Veuillez sélectionner une image valide.",
+        "Choisissez une image au format JPG, PNG, WEBP ou GIF.",
       );
 
       event.target.value = "";
       return;
     }
 
-    setIsUploading(true);
-    setSaveError("");
-    setSuccess(false);
+    if (file.size > 5 * 1024 * 1024) {
+      setSaveError(
+        "La photo ne peut pas dépasser 5 Mo.",
+      );
+      event.target.value = "";
+      return;
+    }
 
-    const reader = new FileReader();
+    if (!session?.user?.id) {
+      setSaveError(
+        "Votre session est introuvable.",
+      );
+      event.target.value = "";
+      return;
+    }
 
-    reader.onload = () => {
-      const result = reader.result;
+    try {
+      setIsUploading(true);
+      setSaveError("");
+      setSuccess(false);
 
-      if (typeof result === "string") {
-        setAvatarUrl(result);
+      const extensionByType: Record<string, string> = {
+        "image/jpeg": "jpg",
+        "image/png": "png",
+        "image/webp": "webp",
+        "image/gif": "gif",
+      };
+      const filePath =
+        `${session.user.id}/avatar-${Date.now()}.${extensionByType[file.type]}`;
+
+      const { error: uploadError } =
+        await supabase.storage
+          .from("avatars")
+          .upload(filePath, file, {
+            contentType: file.type,
+            upsert: true,
+          });
+
+      if (uploadError) {
+        throw uploadError;
       }
 
-      setIsUploading(false);
-      event.target.value = "";
-    };
+      const { data } = supabase.storage
+        .from("avatars")
+        .getPublicUrl(filePath);
 
-    reader.onerror = () => {
+      setAvatarUrl(data.publicUrl);
+    } catch (err) {
       setSaveError(
-        "Nous ne pouvons pas lire l’image sélectionnée.",
+        err instanceof Error
+          ? err.message
+          : "Nous ne pouvons pas envoyer l’image pour le moment.",
       );
-
+    } finally {
       setIsUploading(false);
       event.target.value = "";
-    };
-
-    reader.readAsDataURL(file);
+    }
   };
 
   /* =========================================================
@@ -366,18 +403,13 @@ const GeneralSettings = () => {
 
               <div className="min-w-0!">
                 <p className="text-[10px]! font-medium! text-gray-700!">
-                  JPG, PNG, WEBP ou GIF
+                  JPG, PNG, WEBP ou GIF · 5 Mo maximum
                 </p>
 
                 <button
                   type="button"
-                  onClick={
-                    handleAvatarButtonClick
-                  }
-                  disabled={
-                    isUploading ||
-                    isSaving
-                  }
+                  onClick={handleAvatarButtonClick}
+                  disabled={isUploading || isSaving}
                   className="
                     mt-1.5!
                     inline-flex!
@@ -402,12 +434,20 @@ const GeneralSettings = () => {
                     disabled:opacity-50!
                   "
                 >
-                  <ImagePlus
-                    size={12}
-                    strokeWidth={1.9}
-                  />
-
-                  Modifier la photo
+                  {isUploading ? (
+                    <Loader2
+                      size={12}
+                      className="animate-spin!"
+                    />
+                  ) : (
+                    <ImagePlus
+                      size={12}
+                      strokeWidth={1.9}
+                    />
+                  )}
+                  {isUploading
+                    ? "Envoi en cours…"
+                    : "Modifier la photo"}
                 </button>
               </div>
             </div>
@@ -417,32 +457,15 @@ const GeneralSettings = () => {
               type="file"
               accept="image/jpeg,image/png,image/webp,image/gif"
               hidden
+              disabled={isUploading || isSaving}
               onChange={
                 handleAvatarFileChange
               }
             />
 
-            <div className="mt-4!">
-              <label
-                htmlFor="profile-avatar-url"
-                className="mb-1.5! block! text-[10px]! font-semibold! text-gray-700!"
-              >
-                Adresse de l’image
-              </label>
-
-              <input
-                id="profile-avatar-url"
-                type="url"
-                value={avatarUrl}
-                onChange={(event) =>
-                  setAvatarUrl(
-                    event.target.value,
-                  )
-                }
-                placeholder="https://example.com/avatar.png"
-                className={inputClass}
-              />
-            </div>
+            <p className="mt-2! text-[9px]! leading-4! text-gray-500!">
+              La photo sera appliquée à votre profil après l’enregistrement.
+            </p>
           </div>
         </div>
 
@@ -583,7 +606,7 @@ const GeneralSettings = () => {
         <button
           type="button"
           onClick={handleReset}
-          disabled={isSaving}
+          disabled={isSaving || isUploading}
           className="
             inline-flex!
             h-10!
